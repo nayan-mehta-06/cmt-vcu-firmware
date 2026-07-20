@@ -1,0 +1,165 @@
+/*
+ * DataStructures.c
+ *
+ * Store all global variables that are used on the VCU in data structures
+ *
+ *  Created on: Aug 10, 2024
+ *      Author: Areesh Amir
+ */
+
+#include "data_structures.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+/*
+void initialise_system_state_data(system_state* p_system_state_data)
+{
+
+	p_system_state_data->pedals_range_data_received = false;
+	p_system_state_data->calibration_enable = false;
+	p_system_state_data->CAN_1_message_received = false;
+	p_system_state_data->CAN_2_message_received = false;
+
+}
+*/
+
+void initialise_vehicle_state_data(vehicle_state* p_vehicle_state_data)
+{
+
+	p_vehicle_state_data->APPS_1_percentage = 0;
+	p_vehicle_state_data->APPS_2_percentage = 0;
+
+	p_vehicle_state_data->CAN_2_transmitted_successfully = true;
+
+	// Zero all items of array
+	for(int i=0;i<8;i++)
+	{
+
+		p_vehicle_state_data->warning_lights_secondary_LEDs_control_command[i] = 0;
+
+	}
+
+	p_vehicle_state_data->accy_low_SoC = 0;
+	p_vehicle_state_data->BSPD_current_sensor_current = 0;
+	p_vehicle_state_data->brake_pressure_front_bar = 0;
+	p_vehicle_state_data->brake_pressure_rear_bar = 0;
+
+	// Define final accelerator pedal position percentage value
+	// Driver's accelerator pedal positio
+	p_vehicle_state_data->accelerator_pedal_position_percentage = 0;
+	p_vehicle_state_data->brake_pedal_position_percentage = 0;
+
+	p_vehicle_state_data->torque_command_percentage = 0;
+	p_vehicle_state_data->power_mode = 0;
+
+	p_vehicle_state_data->ready_to_drive = false;
+	p_vehicle_state_data->precharge_complete = false;
+	p_vehicle_state_data->brakes_engaged = false;
+	p_vehicle_state_data->BPPS_fault = false;
+	p_vehicle_state_data->APPS_fault = false;
+	p_vehicle_state_data->faulted_state = false;
+	p_vehicle_state_data->APPS_CAN_timeout_fault = false;
+	p_vehicle_state_data->shutdown_circuit_closed = false;
+
+	p_vehicle_state_data->cooling_pump_ON_time_period_milliseconds = 7;
+	p_vehicle_state_data->cooling_pump_OFF_time_period_milliseconds = 3;
+
+	// Set to no faults
+	p_vehicle_state_data->hard_faults_status = 0b00000000;
+
+	// Set to no faults
+	p_vehicle_state_data->APPS_fault_status = 0b00000000;
+
+	// Set to no faults
+	p_vehicle_state_data->BPPS_fault_status = 0b00000000;
+
+	// Set to no faults
+	p_vehicle_state_data->CAN_error_status = 0b00000000;
+
+	p_vehicle_state_data->Inverter_Speed=0;
+
+
+}
+
+void initialise_CAN_data(CAN* p_CAN_data)
+{
+
+	p_CAN_data->AiM_dash_CAN_transmit_1_enable = false;
+	p_CAN_data->AiM_dash_CAN_transmit_2_enable = false;
+	p_CAN_data->warning_lights_CAN_transmit_enable = false;
+	p_CAN_data->inverter_torque_command_CAN_transmit_enable = true;
+	p_CAN_data->PDM_CAN_transmit_enable = false;
+	p_CAN_data->inverter_torque_command_sent = true;
+
+}
+
+void initialise_BPPS_faults_data(BPPS_faults* p_BPPS_faults_data)
+{
+
+	p_BPPS_faults_data->brake_pedal_implausibility_fault = false;
+	p_BPPS_faults_data->BPPS_1_open_circuit_fault = false;
+	p_BPPS_faults_data->BPPS_1_short_circuit_fault = false;
+	p_BPPS_faults_data->BPPS_2_open_circuit_fault = false;
+	p_BPPS_faults_data->BPPS_2_short_circuit_fault = false;
+
+}
+
+void initialise_APPS_faults_data(APPS_faults* p_APPS_faults_data)
+{
+
+	p_APPS_faults_data->APPS_implausibility_fault = false;
+	p_APPS_faults_data->APPS_1_open_circuit_fault = false;
+	p_APPS_faults_data->APPS_1_short_circuit_fault = false;
+	p_APPS_faults_data->APPS_2_open_circuit_fault = false;
+	p_APPS_faults_data->APPS_2_short_circuit_fault = false;
+
+}
+
+void initialise_E_Interface_data(E_Interface* p_E_Interface_data)
+{
+
+	p_E_Interface_data->speed_limiting_enabled = false;
+	p_E_Interface_data->speed_limit_set_success = false;
+	p_E_Interface_data->speed_limit_kmph = 0;
+	p_E_Interface_data->cooling_channel_enabled = true;
+
+
+}
+
+void initialise_testing_VCU_data(testing_VCU* testing_VCU_data)
+{
+	testing_VCU_data->AIR_digital = false;
+	testing_VCU_data->APPS1 = 0;
+	testing_VCU_data->APPS2 = 0;
+	testing_VCU_data->BPS1 = 0;
+	testing_VCU_data->BSE = 0;
+	testing_VCU_data->BSE_Fault = false;
+	testing_VCU_data->BSPD_CS = 0;
+	testing_VCU_data->CS_fault = false;
+	testing_VCU_data->PC_complete = false;
+	testing_VCU_data->RTD_button_status = false;
+	testing_VCU_data->SAI = 0;
+	testing_VCU_data->SAS = 0;
+	testing_VCU_data->plausibility_fault = false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

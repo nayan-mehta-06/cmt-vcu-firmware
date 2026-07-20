@@ -1,0 +1,23 @@
+/*
+ * ThrottleBrakesFaultChecking.c
+ *
+ *  Created on: Aug 10, 2024
+ *      Author: HP
+ */
+
+#ifndef INC_THROTTLEBRAKESFAULTCHECKING_C_
+#define INC_THROTTLEBRAKESFAULTCHECKING_C_
+
+#include <stdio.h>
+#include <stdbool.h>
+#include "FreeRTOS.h"
+
+int pedal_position_sensor_out_of_range_fault_check(int pedal_position_sensor_raw_value, int pedal_position_sensor_open_circuit_threshold, int pedal_position_sensor_short_circuit_threshold);
+int calculate_percentage(int avg, int min, int max);
+int calculate_percentageNew(int avg, int min, int max);
+
+bool APPS_implausibility_check(int APPS_1_percentage, int APPS_2_percentage);
+bool brake_pedal_implausibility_check(int APPS_1_percentage, int APPS_2_percentage, int brake_pedal_position_percentage, int brakes_engaged_threshold_percentage, bool brake_pedal_implausibility_fault);
+bool brakes_engaged_check(int brake_pedal_position_percentage, int brakes_engaged_threshold_percentage);
+
+#endif /* INC_THROTTLEBRAKESFAULTCHECKING_C_ */

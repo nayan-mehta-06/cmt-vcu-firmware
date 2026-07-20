@@ -1,0 +1,4 @@
+../Core/Src/app/inverter_control.c:19:6:setInverterData1	16	static
+../Core/Src/app/inverter_control.c:27:6:processInverterStatus	16	static
+../Core/Src/app/inverter_control.c:39:6:setInverterData2	16	static
+../Core/Src/app/inverter_control.c:48:6:transmit_inverter_command	40	static

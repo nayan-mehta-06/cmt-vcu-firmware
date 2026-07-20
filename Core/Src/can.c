@@ -1,0 +1,495 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file    can.c
+  * @brief   This file provides code for the configuration
+  *          of the CAN instances.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2024 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+/* Includes ------------------------------------------------------------------*/
+#include "can.h"
+
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
+
+CAN_HandleTypeDef hcan1;
+CAN_HandleTypeDef hcan2;
+
+/* CAN1 init function */
+void MX_CAN1_Init(void)
+{
+
+  /* USER CODE BEGIN CAN1_Init 0 */
+
+  /* USER CODE END CAN1_Init 0 */
+
+  /* USER CODE BEGIN CAN1_Init 1 */
+
+  /* USER CODE END CAN1_Init 1 */
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 6;
+  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_12TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
+  hcan1.Init.TimeTriggeredMode = DISABLE;
+  hcan1.Init.AutoBusOff = ENABLE;
+  hcan1.Init.AutoWakeUp = DISABLE;
+  hcan1.Init.AutoRetransmission = ENABLE;
+  hcan1.Init.ReceiveFifoLocked = DISABLE;
+  hcan1.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN1_Init 2 */
+
+  /* USER CODE END CAN1_Init 2 */
+
+}
+/* CAN2 init function */
+void MX_CAN2_Init(void)
+{
+
+  /* USER CODE BEGIN CAN2_Init 0 */
+
+  /* USER CODE END CAN2_Init 0 */
+
+  /* USER CODE BEGIN CAN2_Init 1 */
+
+  /* USER CODE END CAN2_Init 1 */
+  hcan2.Instance = CAN2;
+  hcan2.Init.Prescaler = 3;
+  hcan2.Init.Mode = CAN_MODE_NORMAL;
+  hcan2.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan2.Init.TimeSeg1 = CAN_BS1_12TQ;
+  hcan2.Init.TimeSeg2 = CAN_BS2_2TQ;
+  hcan2.Init.TimeTriggeredMode = DISABLE;
+  hcan2.Init.AutoBusOff = ENABLE;
+  hcan2.Init.AutoWakeUp = DISABLE;
+  hcan2.Init.AutoRetransmission = ENABLE;
+  hcan2.Init.ReceiveFifoLocked = DISABLE;
+  hcan2.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN2_Init 2 */
+
+  /* USER CODE END CAN2_Init 2 */
+
+}
+
+static uint32_t HAL_RCC_CAN1_CLK_ENABLED=0;
+
+void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
+{
+
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  if(canHandle->Instance==CAN1)
+  {
+  /* USER CODE BEGIN CAN1_MspInit 0 */
+
+  /* USER CODE END CAN1_MspInit 0 */
+    /* CAN1 clock enable */
+    HAL_RCC_CAN1_CLK_ENABLED++;
+    if(HAL_RCC_CAN1_CLK_ENABLED==1){
+      __HAL_RCC_CAN1_CLK_ENABLE();
+    }
+
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+    /**CAN1 GPIO Configuration
+    PD0     ------> CAN1_RX
+    PD1     ------> CAN1_TX
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_0;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_1;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN CAN1_MspInit 1 */
+
+  /* USER CODE END CAN1_MspInit 1 */
+  }
+  else if(canHandle->Instance==CAN2)
+  {
+  /* USER CODE BEGIN CAN2_MspInit 0 */
+
+  /* USER CODE END CAN2_MspInit 0 */
+    /* CAN2 clock enable */
+    __HAL_RCC_CAN2_CLK_ENABLE();
+    HAL_RCC_CAN1_CLK_ENABLED++;
+    if(HAL_RCC_CAN1_CLK_ENABLED==1){
+      __HAL_RCC_CAN1_CLK_ENABLE();
+    }
+
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    /**CAN2 GPIO Configuration
+    PB5     ------> CAN2_RX
+    PB6     ------> CAN2_TX
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF9_CAN2;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN CAN2_MspInit 1 */
+
+  /* USER CODE END CAN2_MspInit 1 */
+  }
+}
+
+void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
+{
+
+  if(canHandle->Instance==CAN1)
+  {
+  /* USER CODE BEGIN CAN1_MspDeInit 0 */
+
+  /* USER CODE END CAN1_MspDeInit 0 */
+    /* Peripheral clock disable */
+    HAL_RCC_CAN1_CLK_ENABLED--;
+    if(HAL_RCC_CAN1_CLK_ENABLED==0){
+      __HAL_RCC_CAN1_CLK_DISABLE();
+    }
+
+    /**CAN1 GPIO Configuration
+    PD0     ------> CAN1_RX
+    PD1     ------> CAN1_TX
+    */
+    HAL_GPIO_DeInit(GPIOD, GPIO_PIN_0|GPIO_PIN_1);
+
+  /* USER CODE BEGIN CAN1_MspDeInit 1 */
+
+  /* USER CODE END CAN1_MspDeInit 1 */
+  }
+  else if(canHandle->Instance==CAN2)
+  {
+  /* USER CODE BEGIN CAN2_MspDeInit 0 */
+
+  /* USER CODE END CAN2_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_CAN2_CLK_DISABLE();
+    HAL_RCC_CAN1_CLK_ENABLED--;
+    if(HAL_RCC_CAN1_CLK_ENABLED==0){
+      __HAL_RCC_CAN1_CLK_DISABLE();
+    }
+
+    /**CAN2 GPIO Configuration
+    PB5     ------> CAN2_RX
+    PB6     ------> CAN2_TX
+    */
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_5|GPIO_PIN_6);
+
+  /* USER CODE BEGIN CAN2_MspDeInit 1 */
+
+  /* USER CODE END CAN2_MspDeInit 1 */
+  }
+}
+
+/* USER CODE BEGIN 1 */
+
+// Define callback function for CAN 1
+//void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan1)
+//{
+//
+//	// Read CAN message
+//	if (HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader, rxData) != HAL_OK)
+//	{
+//
+//		Error_Handler();
+//
+//	}
+//
+//	/* Set flag to indicate CAN message has been received
+//	 * CAN message is processed in freeRTOS.c */
+//	p_system_state_data->CAN_1_message_received = true;
+//
+//}
+
+// Define CAN 1 Filter Masks
+void User_MX_CAN1_Init(void)
+{
+
+	/*** E-THROTTLE CAN FILTER MASK ***/
+
+	CAN_FilterTypeDef  sFilterConfig;
+
+	/* Configure the CAN Filter */
+	sFilterConfig.FilterBank = 0;	//========== CRITICAL ==========// // This says we're current configuring filter #1 for CAN1
+	sFilterConfig.FilterMode = CAN_FILTERMODE_IDLIST;
+	sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+	sFilterConfig.FilterIdHigh = 0x88<<5;
+	sFilterConfig.FilterIdLow = 0x0000;
+	sFilterConfig.FilterMaskIdHigh = 0x000<<5;
+	sFilterConfig.FilterMaskIdLow = 0x0000;
+	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0; //========== CRITICAL ==========//
+	sFilterConfig.FilterActivation = ENABLE;
+	sFilterConfig.SlaveStartFilterBank = 14; //========== CRITICAL ==========//		// This setting tells where CAN2 filters are positioned
+
+	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK)
+	{
+
+		/* Filter configuration Error */
+		Error_Handler();
+
+	}
+
+	/*** INVERTER CAN FILTER MASK ***/
+
+	CAN_FilterTypeDef  sFilterConfig2;
+
+	/* Configure the CAN Filter */
+	sFilterConfig2.FilterBank = 1;	//========== CRITICAL ==========// // This says we're current configuring filter #1 for CAN1
+	sFilterConfig2.FilterMode = CAN_FILTERMODE_IDLIST;
+	sFilterConfig2.FilterScale = CAN_FILTERSCALE_32BIT;
+	sFilterConfig2.FilterIdHigh = 0x181<<5;
+	sFilterConfig2.FilterIdLow = 0x0000;
+	sFilterConfig2.FilterMaskIdHigh = 0x181<<5;
+	sFilterConfig2.FilterMaskIdLow = 0x0000;
+	sFilterConfig2.FilterFIFOAssignment = CAN_RX_FIFO0; //========== CRITICAL ==========//
+	sFilterConfig2.FilterActivation = ENABLE;
+
+	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig2) != HAL_OK)
+	{
+
+		/* Filter configuration Error */
+		Error_Handler();
+
+	}
+
+	/*** TMS CAN FILTER MASK ***/
+
+	CAN_FilterTypeDef  sFilterConfig3;
+
+	/* Configure the CAN Filter */
+	sFilterConfig3.FilterBank = 2;	//========== CRITICAL ==========// // This says we're current configuring filter #1 for CAN1
+	sFilterConfig3.FilterMode = CAN_FILTERMODE_IDMASK;
+	sFilterConfig3.FilterScale = CAN_FILTERSCALE_32BIT;
+	sFilterConfig3.FilterIdHigh = 0x341<<5;
+	sFilterConfig3.FilterIdLow = 0x300<<5;;
+	sFilterConfig3.FilterMaskIdHigh = 0x0000;
+	sFilterConfig3.FilterMaskIdLow = 0x0000;
+	sFilterConfig3.FilterFIFOAssignment = CAN_RX_FIFO0; //========== CRITICAL ==========//
+	sFilterConfig3.FilterActivation = ENABLE;
+
+	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig3) != HAL_OK)
+	{
+
+		/* Filter configuration Error */
+		Error_Handler();
+
+	}
+
+	/*** BMS CAN FILTER MASK ***/
+
+	CAN_FilterTypeDef  sFilterConfig4;
+
+	/* Configure the CAN Filter */
+	sFilterConfig4.FilterBank = 3;	//========== CRITICAL ==========// // This says we're current configuring filter #1 for CAN1
+	sFilterConfig4.FilterMode = CAN_FILTERMODE_IDMASK;
+	sFilterConfig4.FilterScale = CAN_FILTERSCALE_32BIT;
+	sFilterConfig4.FilterIdHigh = 0x6B4<<5;
+	sFilterConfig4.FilterIdLow = 0x0000;
+	sFilterConfig4.FilterMaskIdHigh = 0x6B0<<5;
+	sFilterConfig4.FilterMaskIdLow = 0x0000;
+	sFilterConfig4.FilterFIFOAssignment = CAN_RX_FIFO0; //========== CRITICAL ==========//
+	sFilterConfig4.FilterActivation = ENABLE;
+
+	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig4) != HAL_OK)
+	{
+
+		/* Filter configuration Error */
+		Error_Handler();
+
+	}
+
+	/*** EXTD ID BMS CAN FILTER MASK ***/
+
+	CAN_FilterTypeDef  sFilterConfig5;
+
+	/* Configure the CAN Filter */
+	sFilterConfig5.FilterBank = 4;	//========== CRITICAL ==========// // This says we're current configuring filter #1 for CAN1
+	sFilterConfig5.FilterMode = CAN_FILTERMODE_IDMASK;
+	sFilterConfig5.FilterScale = CAN_FILTERSCALE_32BIT;
+	sFilterConfig5.FilterIdHigh = 0b0001100011101110111;
+	sFilterConfig5.FilterIdLow = 0b1111110000000 << 3;
+	sFilterConfig5.FilterMaskIdHigh = 0b1111111100000001111;
+	sFilterConfig5.FilterMaskIdLow = 0b0000110001011 << 3;
+	sFilterConfig5.FilterFIFOAssignment = CAN_RX_FIFO0; //========== CRITICAL ==========//
+	sFilterConfig5.FilterActivation = ENABLE;
+
+	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig5) != HAL_OK)
+	{
+
+		/* Filter configuration Error */
+		Error_Handler();
+
+	}
+
+	/* Start the CAN peripheral */
+	if (HAL_CAN_Start(&hcan1) != HAL_OK)
+	{
+
+		/* Start Error */
+		Error_Handler();
+
+	}
+
+	/* Activate CAN RX notification */
+	if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)  //========== CRITICAL ==========//
+	{
+
+		/* Notification Error */
+		Error_Handler();
+
+	}
+
+}
+
+// Define CAN 2 Filter Masks
+void User_MX_CAN2_Init(void)
+{
+
+	/*** WHEEL SPEED 0x1F4 ***/
+
+	CAN_FilterTypeDef  sFilterConfig1;
+
+	/* Configure the CAN Filter */
+	sFilterConfig1.FilterBank = 14; //========== CRITICAL ==========//	// CAN2 must use filter bank 14 forward.  This says we're now configuring filter 14, the first for CAN2.
+	sFilterConfig1.FilterMode = CAN_FILTERMODE_IDMASK;
+	sFilterConfig1.FilterScale = CAN_FILTERSCALE_32BIT;
+	sFilterConfig1.FilterIdHigh = 0x1F4<<5;
+	sFilterConfig1.FilterIdLow = 0x0000;
+	sFilterConfig1.FilterMaskIdHigh = 0x1F4<<5;
+	sFilterConfig1.FilterMaskIdLow = 0x0000;
+	sFilterConfig1.FilterFIFOAssignment = CAN_RX_FIFO1; //========== CRITICAL ==========//
+	sFilterConfig1.FilterActivation = ENABLE;
+	sFilterConfig1.SlaveStartFilterBank = 14; //========== CRITICAL ==========//	// This setting perhaps NOT used when configuring CAN2.  It's used when configuring CAN1 in order to position CAN2
+
+	if (HAL_CAN_ConfigFilter(&hcan2, &sFilterConfig1) != HAL_OK)
+	{
+
+		/* Filter configuration Error */
+		Error_Handler();
+
+	}
+
+	/*** WHEEL SPEED 0x1F5 ***/
+
+	CAN_FilterTypeDef  sFilterConfig2;
+
+	/* Configure the CAN Filter */
+	sFilterConfig2.FilterBank = 14; //========== CRITICAL ==========//	// CAN2 must use filter bank 14 forward.  This says we're now configuring filter 14, the first for CAN2.
+	sFilterConfig2.FilterMode = CAN_FILTERMODE_IDMASK;
+	sFilterConfig2.FilterScale = CAN_FILTERSCALE_32BIT;
+	sFilterConfig2.FilterIdHigh = 0x1F5<<5;
+	sFilterConfig2.FilterIdLow = 0x0000;
+	sFilterConfig2.FilterMaskIdHigh = 0x1F5<<5;
+	sFilterConfig2.FilterMaskIdLow = 0x0000;
+	sFilterConfig2.FilterFIFOAssignment = CAN_RX_FIFO1; //========== CRITICAL ==========//
+	sFilterConfig2.FilterActivation = ENABLE;
+	sFilterConfig2.SlaveStartFilterBank = 14; //========== CRITICAL ==========//	// This setting perhaps NOT used when configuring CAN2.  It's used when configuring CAN1 in order to position CAN2
+
+	if (HAL_CAN_ConfigFilter(&hcan2, &sFilterConfig2) != HAL_OK)
+	{
+
+		/* Filter configuration Error */
+		Error_Handler();
+
+	}
+
+	/*** WHEEL SPEED 0x1F6 ***/
+
+	CAN_FilterTypeDef  sFilterConfig3;
+
+	/* Configure the CAN Filter */
+	sFilterConfig3.FilterBank = 14; //========== CRITICAL ==========//	// CAN2 must use filter bank 14 forward.  This says we're now configuring filter 14, the first for CAN2.
+	sFilterConfig3.FilterMode = CAN_FILTERMODE_IDMASK;
+	sFilterConfig3.FilterScale = CAN_FILTERSCALE_32BIT;
+	sFilterConfig3.FilterIdHigh = 0x1F6<<5;
+	sFilterConfig3.FilterIdLow = 0x0000;
+	sFilterConfig3.FilterMaskIdHigh = 0x1F6<<5;
+	sFilterConfig3.FilterMaskIdLow = 0x0000;
+	sFilterConfig3.FilterFIFOAssignment = CAN_RX_FIFO1; //========== CRITICAL ==========//
+	sFilterConfig3.FilterActivation = ENABLE;
+	sFilterConfig3.SlaveStartFilterBank = 14; //========== CRITICAL ==========//	// This setting perhaps NOT used when configuring CAN2.  It's used when configuring CAN1 in order to position CAN2
+
+	if (HAL_CAN_ConfigFilter(&hcan2, &sFilterConfig3) != HAL_OK)
+	{
+
+		/* Filter configuration Error */
+		Error_Handler();
+
+	}
+
+	/*** WHEEL SPEED 0x1F7 ***/
+
+	CAN_FilterTypeDef  sFilterConfig4;
+
+	/* Configure the CAN Filter */
+	sFilterConfig4.FilterBank = 14; //========== CRITICAL ==========//	// CAN2 must use filter bank 14 forward.  This says we're now configuring filter 14, the first for CAN2.
+	sFilterConfig4.FilterMode = CAN_FILTERMODE_IDMASK;
+	sFilterConfig4.FilterScale = CAN_FILTERSCALE_32BIT;
+	sFilterConfig4.FilterIdHigh = 0x1F7<<5;
+	sFilterConfig4.FilterIdLow = 0x0000;
+	sFilterConfig4.FilterMaskIdHigh = 0x1F7<<5;
+	sFilterConfig4.FilterMaskIdLow = 0x0000;
+	sFilterConfig4.FilterFIFOAssignment = CAN_RX_FIFO1; //========== CRITICAL ==========//
+	sFilterConfig4.FilterActivation = ENABLE;
+	sFilterConfig4.SlaveStartFilterBank = 14; //========== CRITICAL ==========//	// This setting perhaps NOT used when configuring CAN2.  It's used when configuring CAN1 in order to position CAN2
+
+	if (HAL_CAN_ConfigFilter(&hcan2, &sFilterConfig4) != HAL_OK)
+	{
+
+		/* Filter configuration Error */
+		Error_Handler();
+
+	}
+
+	/* Start the CAN peripheral */
+	if (HAL_CAN_Start(&hcan2) != HAL_OK)
+	{
+
+		/* Start Error */
+		Error_Handler();
+
+	}
+
+	/* Activate CAN RX notification */
+	if (HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK)  //========== CRITICAL ==========//
+	{
+
+		/* Notification Error */
+		Error_Handler();
+
+	}
+
+}
+
+
+/* USER CODE END 1 */
+

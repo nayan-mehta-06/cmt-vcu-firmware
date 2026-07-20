@@ -1,0 +1,182 @@
+/*
+ * ThrottleandBrakesFaultChecking.c
+ *
+ *  Created on: Aug 10, 2024
+ *      Author: Areesh Amir
+ */
+
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+#include "FreeRTOS.h"
+#include "cmsis_os.h"
+#include <stdlib.h>
+
+// Check if APPS / BPPS sensor values are outside expected working range
+int pedal_position_sensor_out_of_range_fault_check(int pedal_position_sensor_raw_value, int pedal_position_sensor_open_circuit_threshold, int pedal_position_sensor_short_circuit_threshold)
+{
+
+	// 0 = normal condition
+	// 1 = short to GND - short circuit fault
+	// 2 = short to VCC - open circuit fault
+
+	int pedal_position_sensor_out_of_range_fault_status = 0;
+
+	// Check for a short to GND
+	if (pedal_position_sensor_raw_value <= pedal_position_sensor_short_circuit_threshold)
+	{
+
+		pedal_position_sensor_out_of_range_fault_status = 1;
+
+	}
+
+	// Check for a short to Vcc
+	else if(pedal_position_sensor_raw_value >= pedal_position_sensor_open_circuit_threshold)
+	{
+
+		pedal_position_sensor_out_of_range_fault_status = 2;
+
+	}
+
+	else
+	{
+
+		pedal_position_sensor_out_of_range_fault_status = 0;
+
+	}
+
+	return pedal_position_sensor_out_of_range_fault_status;
+
+}
+
+int calculate_percentage(int avg, int min, int max)
+{
+
+	int percentage = 0;
+
+	if(min != max)
+	{
+
+		percentage = (int) ( ((avg - min) * 100) / (max - min) );
+
+	}
+
+	if(percentage < 0)
+	{
+
+		percentage = 0;
+
+	}
+
+	else if(percentage > 100)
+	{
+
+		percentage = 100;
+
+	}
+
+	return percentage;
+
+}
+
+int calculate_percentageNew(int avg, int min, int max)
+{
+
+	int percentage = 0;
+
+	if(min != max)
+	{
+
+		percentage = (int) ( ((avg - min) * 100) / (max - min) );
+
+	}
+
+	if(percentage < 3)
+	{
+
+		percentage = 0;
+
+	}
+
+	else if(percentage > 100)
+	{
+
+		percentage = 100;
+
+	}
+
+	return percentage;}
+
+
+// Check for APPS implausbility fault
+// Occurs if there is a deviation of more than 10% between pedal travel between APPS1 and APPS2
+bool APPS_implausibility_check(int APPS_1_percentage, int APPS_2_percentage)
+{
+
+	bool APPS_implausibility_fault = false;
+
+	// Define fault threshold at 10% as per Rules
+	int APPS_pedal_travel_deviation_fault_threshold = 10;
+
+	// Calculate pedal travel deviation
+	int APPS_pedal_travel_deviation = abs( (APPS_1_percentage - APPS_2_percentage) );
+
+	if(APPS_pedal_travel_deviation > APPS_pedal_travel_deviation_fault_threshold)
+	{
+
+		APPS_implausibility_fault = true;
+
+	}
+
+	return APPS_implausibility_fault;
+
+}
+
+// Check for brake implausbility
+// Occurs if the brakes are engaged and more than 25% accelerator pedal travel is detected simultaneously
+bool brake_pedal_implausibility_check(int APPS_1_percentage, int APPS_2_percentage, int brake_pedal_position_percentage, int brakes_engaged_threshold_percentage, bool brake_pedal_implausibility_fault)
+{
+
+	// Set APPS pedal travel fault threshold to 25%
+	int APPS_pedal_travel_fault_threshold_percentage = 25;
+
+	// Set APPS pedal travel fault reset threshold to 5%
+	int APPS_pedal_travel_fault_reset_threshold_percentage = 5;
+
+	if( (brake_pedal_implausibility_fault == false) && (brake_pedal_position_percentage > brakes_engaged_threshold_percentage) && (APPS_1_percentage > APPS_pedal_travel_fault_threshold_percentage) && (APPS_2_percentage > APPS_pedal_travel_fault_threshold_percentage) )
+	{
+
+		brake_pedal_implausibility_fault = true;
+
+	}
+
+	else if( (brake_pedal_implausibility_fault == true) && (APPS_1_percentage <= APPS_pedal_travel_fault_reset_threshold_percentage) && (APPS_2_percentage <= APPS_pedal_travel_fault_reset_threshold_percentage) )
+	{
+
+		brake_pedal_implausibility_fault = false;
+
+	}
+
+	return brake_pedal_implausibility_fault;
+
+}
+
+
+// Check if brakes are engaged
+bool brakes_engaged_check(int brake_pedal_position_percentage, int brakes_engaged_threshold_percentage)
+{
+
+	bool brakes_engaged = false;
+
+	if(brake_pedal_position_percentage > brakes_engaged_threshold_percentage)
+	{
+
+		brakes_engaged = true;
+
+	}
+
+	return brakes_engaged;
+
+}
+
+

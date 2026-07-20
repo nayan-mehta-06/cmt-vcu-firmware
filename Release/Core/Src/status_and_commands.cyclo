@@ -1,0 +1,12 @@
+../Core/Src/status_and_commands.c:267:6:CAN_1_Error_Handler	4
+../Core/Src/status_and_commands.c:300:6:CAN_2_Error_Handler	4
+../Core/Src/status_and_commands.c:48:6:CAN_transmit	16
+../Core/Src/status_and_commands.c:333:6:transmit_inverter_register_request	5
+../Core/Src/status_and_commands.c:421:9:HFLB_fault_status_check	11
+../Core/Src/status_and_commands.c:503:6:transmit_inverter_torque_command	4
+../Core/Src/status_and_commands.c:572:6:transmit_inverter_speed_limit	2
+../Core/Src/status_and_commands.c:617:6:set_PWM_output	5
+../Core/Src/status_and_commands.c:674:6:calculate_PWM_time_periods	1
+../Core/Src/status_and_commands.c:829:6:format_and_transmit_inverter_data_to_AiM_dash	2
+../Core/Src/status_and_commands.c:718:6:transfer_inverter_data_to_CAN_2	14
+../Core/Src/status_and_commands.c:846:6:process_E_Interface_data	5

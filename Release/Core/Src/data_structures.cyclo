@@ -1,0 +1,6 @@
+../Core/Src/data_structures.c:17:6:initialise_system_state_data	1
+../Core/Src/data_structures.c:27:6:initialise_vehicle_state_data	1
+../Core/Src/data_structures.c:81:6:initialise_CAN_data	1
+../Core/Src/data_structures.c:93:6:initialise_BPPS_faults_data	1
+../Core/Src/data_structures.c:104:6:initialise_APPS_faults_data	1
+../Core/Src/data_structures.c:115:6:initialise_E_Interface_data	1

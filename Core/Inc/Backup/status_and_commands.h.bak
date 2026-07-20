@@ -1,0 +1,34 @@
+/*
+ * status_and_commands.h
+ *
+ *  Created on: Aug 10, 2024
+ *      Author: Areesh Amir
+ */
+
+#ifndef INC_STATUS_AND_COMMANDS_H_
+#define INC_STATUS_AND_COMMANDS_H_
+
+#include "status_and_commands.h"
+#include "data_structures.h"
+#include "main.h"
+#include "FreeRTOS.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+bool CAN_transmit(uint8_t* data, int dlc, int id, int can_line, int CAN_ID_format);
+void CAN_1_Error_Handler();
+void CAN_2_Error_Handler();
+void transmit_inverter_register_request(uint8_t REG_ID, int data_receive_cycle_time_milliseconds, int data_request_is_cyclic);
+uint8_t HFLB_fault_status_check(void);
+bool transmit_inverter_torque_command(int torque_command_percentage);
+void transmit_inverter_speed_limit(bool disable_speed_limit);
+void set_PWM_output(TIM_HandleTypeDef* timer_handle, uint8_t timer_channel, int duty_cycle_percentage);
+void calculate_PWM_time_periods(int cooling_pump_frequency_Hz, int cooling_pump_duty_cycle_percentage);
+void transfer_inverter_data_to_CAN_2(uint8_t* rxData, int dlc, int REG_ID);
+void format_and_transmit_inverter_data_to_AiM_dash(uint8_t* inverter_CAN_data, uint8_t* rxData, int inverter_data_dlc, uint8_t AiM_dash_CAN_ID);
+void process_E_Interface_data(uint8_t* rxData);
+
+#endif /* INC_STATUS_AND_COMMANDS_H_ */

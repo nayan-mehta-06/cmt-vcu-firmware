@@ -1,0 +1,2 @@
+../Core/Src/app/process_pedals_data.c:20:6:Task_Process_Pedals_Data	2
+../Core/Src/app/process_pedals_data.c:54:9:calc_adc_percentage	3

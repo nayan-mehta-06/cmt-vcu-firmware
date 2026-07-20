@@ -1,0 +1,2 @@
+../Core/Src/app/process_adc.c:20:6:Task_Process_ADC	2
+../Core/Src/app/process_adc.c:57:6:Clamp_ADC	3

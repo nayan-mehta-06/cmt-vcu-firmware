@@ -1,0 +1,5 @@
+../Core/Src/throttle_and_brakes_checks.c:15:5:pedal_position_sensor_out_of_range_fault_check	0	static
+../Core/Src/throttle_and_brakes_checks.c:51:5:calculate_percentage	0	static
+../Core/Src/throttle_and_brakes_checks.c:83:6:APPS_implausibility_check	0	static
+../Core/Src/throttle_and_brakes_checks.c:107:6:brake_pedal_implausibility_check	8	static
+../Core/Src/throttle_and_brakes_checks.c:136:6:brakes_engaged_check	0	static

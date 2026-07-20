@@ -1,0 +1,6 @@
+../Core/Src/can.c:31:6:MX_CAN1_Init	8	static
+../Core/Src/can.c:63:6:MX_CAN2_Init	8	static
+../Core/Src/can.c:97:6:HAL_CAN_MspInit	64	static
+../Core/Src/can.c:165:6:HAL_CAN_MspDeInit	0	static
+../Core/Src/can.c:234:6:User_MX_CAN1_Init	216	static
+../Core/Src/can.c:374:6:User_MX_CAN2_Init	176	static

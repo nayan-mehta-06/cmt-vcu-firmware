@@ -1,0 +1,349 @@
+/*
+ * DataStructures.h
+ *
+ * Store all global variables that are used on the VCU in data structures
+ *
+ *  Created on: Aug 10, 2024
+ *      Author: Areesh Amir
+ */
+
+#ifndef INC_DATA_STRUCTURES_H_
+#define INC_DATA_STRUCTURES_H_
+
+#include <stdbool.h>
+#include <stdint.h>
+
+
+// Analogue Data
+// Each analogue value has both a RAW and FILTERED value
+
+typedef struct analogue_data
+{
+
+	int raw_ADC_value;
+	int value;
+
+} analogue_data;
+
+typedef struct APPS
+{
+
+	// APPS - Accelerator Pedal Position Sensor
+	analogue_data APPS_1;
+	analogue_data APPS_2;
+
+} APPS;
+
+typedef struct BPPS
+{
+
+	// BPPS - Brake Pedal Position Sensor
+	analogue_data BPPS_1;
+	analogue_data BPPS_2;
+
+} BPPS;
+
+typedef struct pedals_range_data
+{
+
+	int hardcoded_value;
+	int value;
+
+} pedals_range_data;
+
+typedef struct pedals_range
+{
+
+	// Define APPS min and max values
+	pedals_range_data APPS_1_min;
+	pedals_range_data APPS_1_max;
+	pedals_range_data APPS_2_min;
+	pedals_range_data APPS_2_max;
+
+	pedals_range_data APPS_1_min_deadzone_offset;
+	pedals_range_data APPS_1_max_deadzone_offset;
+	pedals_range_data APPS_2_min_deadzone_offset;
+	pedals_range_data APPS_2_max_deadzone_offset;
+
+	// Define BPPS min and max values
+	pedals_range_data BPPS_1_min;
+	pedals_range_data BPPS_1_max;
+	pedals_range_data BPPS_2_min;
+	pedals_range_data BPPS_2_max;
+
+	pedals_range_data BPPS_1_min_deadzone_offset;
+	pedals_range_data BPPS_1_max_deadzone_offset;
+	pedals_range_data BPPS_2_min_deadzone_offset;
+	pedals_range_data BPPS_2_max_deadzone_offset;
+
+} pedals_range;
+
+
+// Vehicle state values
+// Parameters that define the state of the vehicle
+typedef struct vehicle_state
+{
+
+	bool CAN_2_transmitted_successfully;
+
+	int APPS_1_percentage;
+	int APPS_2_percentage;
+
+	uint8_t warning_lights_secondary_LEDs_control_command[8];
+
+	bool accy_low_SoC;
+
+	int BSPD_current_sensor_current;
+	float brake_pressure_front_bar;
+	float brake_pressure_rear_bar;
+	int accelerator_pedal_position_percentage;
+	int brake_pedal_position_percentage;
+	int torque_command_percentage;
+	int power_mode;
+
+	//yas
+	bool command_deviation;
+	//yas end
+
+	bool faulted_state;
+	bool BPPS_fault;
+	bool APPS_fault;
+	bool APPS_CAN_timeout_fault;
+	bool precharge_complete;
+	bool ready_to_drive;
+	bool brakes_engaged;
+	bool shutdown_circuit_closed;
+	bool INV_fault;
+
+	float cooling_pump_ON_time_period_milliseconds;
+	float cooling_pump_OFF_time_period_milliseconds;
+
+	uint8_t hard_faults_status;
+	uint8_t APPS_fault_status;
+	uint8_t BPPS_fault_status;
+	uint8_t CAN_error_status;
+	uint16_t INVERTER_fault_status;
+	//carlo
+	float Inverter_Speed;
+	//carlo end
+} vehicle_state;
+
+typedef struct wheel_speeds
+{
+
+	float wheel_speed_front_left_RPM;
+	float wheel_speed_front_right_RPM;
+	float wheel_speed_rear_left_RPM;
+	float wheel_speed_rear_right_RPM;
+
+} wheel_speeds;
+
+// System State
+// Parameters that define the state of the VCU
+/*
+typedef struct system_state
+{
+
+	volatile bool pedals_range_data_received;
+	volatile bool calibration_enable;
+	volatile bool CAN_1_message_received;
+	volatile bool CAN_2_message_received;
+
+} system_state;
+*/
+
+typedef struct BPPS_faults
+{
+
+	volatile bool brake_pedal_implausibility_fault;
+	volatile bool BPPS_1_open_circuit_fault;
+	volatile bool BPPS_1_short_circuit_fault;
+	volatile bool BPPS_2_open_circuit_fault;
+	volatile bool BPPS_2_short_circuit_fault;
+
+
+} BPPS_faults;
+
+typedef struct APPS_faults
+{
+
+	volatile bool APPS_implausibility_fault;
+	volatile bool APPS_1_open_circuit_fault;
+	volatile bool APPS_1_short_circuit_fault;
+	volatile bool APPS_2_open_circuit_fault;
+	volatile bool APPS_2_short_circuit_fault;
+
+
+} APPS_faults;
+
+// Inverter values
+typedef struct inverter
+{
+
+	float max_torque_request;
+	float max_torque_limit_Nm;
+	float motor_torque_constant;
+
+	float max_torque_Nm;
+	float motor_RPM;
+	float current_DC;
+	float angular_speed_radians_per_second;
+	float I_max_peak_setting;
+	float I_max_peak_RMS;
+	float I_device_setting;
+
+
+} inverter;
+
+// EEPROM values
+typedef struct EEPROM
+{
+
+	bool eeprom_loaded;
+	bool eeprom_checked;
+	bool eeprom_enable;
+	bool eeprom_done;
+
+} EEPROM;
+
+// CAN values
+typedef struct CAN
+{
+
+	bool AiM_dash_CAN_transmit_1_enable;
+	bool AiM_dash_CAN_transmit_2_enable;
+	bool warning_lights_CAN_transmit_enable;
+	bool inverter_torque_command_CAN_transmit_enable;
+	bool PDM_CAN_transmit_enable;
+	bool inverter_torque_command_sent;
+
+} CAN;
+
+// Data logged to AiM dash
+typedef struct AiM_dash
+{
+
+	int BSPD_current_sensor_current;
+	float brake_pressure_front_bar;
+	float brake_pressure_rear_bar;
+	int accelerator_pedal_position_percentage;
+	int torque_command_percentage;
+	int power_mode;
+
+} AiM_dash;
+
+
+typedef struct E_Interface
+{
+
+	bool speed_limiting_enabled;
+	bool speed_limit_set_success;
+	int speed_limit_kmph;
+
+	bool cooling_channel_enabled;
+
+
+
+} E_Interface;
+
+
+// Power limiting values
+typedef struct power_limiting
+{
+
+
+
+} power_limiting;
+
+// Launch values
+typedef struct launch
+{
+
+	bool launch_enable;
+	bool launch_active;
+
+	bool launch_start_indication;
+	bool launch_time_limit;
+
+	float launch_time_seconds;
+	float launch_start_time;
+
+} launch;
+
+
+// Traction Control values
+typedef struct traction_control
+{
+
+	bool traction_control_enable;
+
+	bool wheels_slipping;
+	bool wheel_slip_occurred;
+
+	// Different Modes
+	bool proportional_traction_control_enable;
+	bool PI_traction_control_enable;
+
+	float average_front_wheel_speed_RPM;
+	float average_rear_wheel_speed_RPM;
+	float vehicle_slip_ratio;
+	float slip_ratio_target;
+	float slip_ratio_error_term;
+	float slip_ratio_error_sum;
+
+	float throttle_adjustment_percentage;
+	float proportional_control_throttle_adjustment_percentage;
+	float integral_control_throttle_adjustment_percentage;
+	float integral_control_throttle_adjustment_percentage_limit;
+	float throttle_adjustment_percentage_limit;
+
+} traction_control;
+
+
+// Testing VCU Input and Output Struct
+typedef struct testing_VCU
+{
+	uint16_t APPS1;
+	uint16_t APPS2;
+	uint16_t BPS1;
+	uint16_t BPS2;
+	uint16_t BSPD_CS;
+	uint16_t BSE;
+	uint16_t SAS;
+	uint16_t SAI;
+
+	bool RTD_button_status;
+	bool AIR_digital;
+	bool PC_complete;
+
+	bool BSE_Fault;
+	bool plausibility_fault;
+	bool CS_fault;
+
+
+} testing_VCU;
+
+
+//void initialise_system_state_data(system_state* p_system_state_data);
+//extern system_state* p_system_state_data;
+
+void initialise_vehicle_state_data(vehicle_state* p_vehicle_state_data);
+extern vehicle_state* p_vehicle_state_data;
+
+void initialise_CAN_data(CAN* p_CAN_data);
+extern CAN* p_CAN_data;
+
+void initialise_BPPS_faults_data(BPPS_faults* p_BPPS_faults_data);
+extern BPPS_faults* p_BPPS_faults_data;
+
+void initialise_APPS_faults_data(APPS_faults* p_APPS_faults_data);
+extern APPS_faults* p_APPS_faults_data;
+
+void initialise_E_Interface_data(E_Interface* p_E_Interface_data);
+extern E_Interface* p_E_Interface_data;
+
+void initialise_testing_VCU_data(testing_VCU* testing_VCU_data);
+extern testing_VCU* p_testing_vcu_data;
+
+
+#endif /* INC_DATA_STRUCTURES_H_ */
