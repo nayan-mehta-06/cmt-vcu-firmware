@@ -54,7 +54,7 @@ bool transmit_inverter_command(InverterSetpoints_t *p_inverter_setpoints, uint8_
 	uint16_t can_address = AMK_SEND_MSG_1 + inverter_node_number;
 
 
-	osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
+	//osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
 
 		txData[0] = (uint8_t)(p_inverter_setpoints_1 -> control & 0xFF);
 		txData[1] = (uint8_t)(p_inverter_setpoints_1 -> control >> 8);
@@ -68,7 +68,7 @@ bool transmit_inverter_command(InverterSetpoints_t *p_inverter_setpoints, uint8_
 		txData[6] = (uint8_t)(p_inverter_setpoints_1 -> torque_limit_negative & 0xFF);
 		txData[7] = (uint8_t)(p_inverter_setpoints_1 -> torque_limit_negative >> 8);
 
-    osMutexRelease(InverterData1_MutexHandle);
+    //osMutexRelease(InverterData1_MutexHandle);
 
 	if ( CAN_transmit(txData, 8, can_address, CAN_1, CAN_STD_ID_FORMAT) )
 	{

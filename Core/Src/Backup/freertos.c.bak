@@ -31,6 +31,8 @@
 #include "app/process_adc.h"
 #include "app/calibration.h"
 
+#include "config/vcu_config.h"
+
 #include <stdlib.h>
 #include "can.h"
 #include "adc.h"

@@ -26,6 +26,7 @@ extern osMutexId_t PedalsState_MutexHandle;
 extern osMutexId_t InverterData1_MutexHandle;
 
 extern osTimerId_t RTD_ButtonTimerHandle;
+extern osTimerId_t InverterCAN_TransmitHandle;
 
 
 void Task_Process_CAN_Msgs(void *argument);

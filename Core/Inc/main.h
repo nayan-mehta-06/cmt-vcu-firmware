@@ -164,14 +164,13 @@ void Error_Handler(void);
 
 #define RTD_BUTTON_PRESS_MILLISECONDS pdMS_TO_TICKS(200)
 // Try reduce to 10Hz for traction control
-#define INVERTER_TORQUE_COMMAND_CAN_TRANSMIT_RATE pdMS_TO_TICKS(20) // 50Hz
 
 
 #define ADC_INDEX_USED 2
-#define ADC_BUFFER_LENGTH 5
+#define ADC_BUFFER_LENGTH 8
 #define MAX_ADC_VALUE 4096
 
-extern uint32_t raw_ADC_values[ADC_BUFFER_LENGTH];
+extern uint16_t raw_ADC_values[ADC_BUFFER_LENGTH];
 
 #define PRECHARGE_PERCENTAGE 90
 

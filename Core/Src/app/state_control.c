@@ -24,7 +24,7 @@ void Task_State_Ctrl(void *argument)
 								  NULL,
 								  0) != osOK)
 			{
-				p_queue_errors_data->state_transition_errors++;
+				// p_queue_errors_data->state_transition_errors++;
 			}
 
 	  osMutexAcquire(SystemState_MutexHandle, osWaitForever);

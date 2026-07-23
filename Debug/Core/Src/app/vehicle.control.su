@@ -1,2 +1,2 @@
 ../Core/Src/app/vehicle.control.c:23:6:Task_Vehicle_Ctrl	32	static
-../Core/Src/app/vehicle.control.c:63:6:InverterCAN_TransmitCallback	16	static
+../Core/Src/app/vehicle.control.c:65:6:InverterCAN_TransmitCallback	16	static

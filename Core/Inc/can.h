@@ -37,7 +37,6 @@ extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 
 /* USER CODE BEGIN Private defines */
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan1);
 void User_MX_CAN1_Init(void);
 void User_MX_CAN2_Init(void);
 

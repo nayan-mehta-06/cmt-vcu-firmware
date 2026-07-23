@@ -79,7 +79,8 @@ CAN_RxHeaderTypeDef RxHeader;
 uint32_t TxMailbox;
 uint32_t TxMailbox_CAN2;
 
-uint32_t raw_ADC_values[ADC_BUFFER_LENGTH] = {0};
+uint16_t raw_ADC_values[ADC_BUFFER_LENGTH] = {0};
+
 
 /* USER CODE END PTD */
 
@@ -108,7 +109,6 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
 /* USER CODE END 0 */
 
 /**
@@ -151,8 +151,9 @@ int main(void)
   MX_USART1_Init();
   /* USER CODE BEGIN 2 */
 
-  // Start ADC
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*) raw_ADC_values, ADC_BUFFER_LENGTH);
+  // Initalise CAN Filter Mask functions
+  User_MX_CAN1_Init();
+  User_MX_CAN2_Init();
 
   // Start timer 2, which triggers ADC readings
   HAL_TIM_Base_Start(&htim2);
@@ -160,15 +161,9 @@ int main(void)
   // Start timer 3 which ...
   HAL_TIM_Base_Start_IT(&htim1);
 
-  // Initialise CAN 1
-  HAL_CAN_Init(&hcan1);
+  // Start ADC
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*) raw_ADC_values, ADC_BUFFER_LENGTH);
 
-  // Initialise CAN 2
-  HAL_CAN_Init(&hcan2);
-
-  // Initalise CAN Filter Mask functions
-  User_MX_CAN1_Init();
-  User_MX_CAN2_Init();
 
   system_state = STATE_IDLE;
 

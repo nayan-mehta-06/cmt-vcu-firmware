@@ -26,6 +26,8 @@ void Task_Vehicle_Ctrl(void *argument)
 	int16_t torque_setpoint;
 	SystemState_t current_state;
 
+	osTimerStart(InverterCAN_TransmitHandle, INVERTER_TORQUE_COMMAND_CAN_TRANSMIT_RATE);
+
   /* Infinite loop */
   for(;;)
   {
@@ -62,9 +64,11 @@ void Task_Vehicle_Ctrl(void *argument)
 
 void InverterCAN_TransmitCallback(void *argument)
 {
+
 	osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
 
 		transmit_inverter_command(p_inverter_setpoints_1, INVERTER_1_NODE_ADDRESS);
 
 	osMutexRelease(InverterData1_MutexHandle);
+
 }

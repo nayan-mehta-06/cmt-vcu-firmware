@@ -147,7 +147,6 @@ void Task_RTD(void *argument)
 	    		  p_queue_errors_data->state_transition_errors++;
 	    	  }
 
-	    	  system_state = STATE_RTD;
 	          p_vehicle_state_data->inverter_enabled = true;
 	      }
 	  }
@@ -165,7 +164,6 @@ void Task_RTD(void *argument)
 	    		  p_queue_errors_data->state_transition_errors++;
 	    	  }
 
-	    	  system_state = STATE_IDLE;
 	          p_vehicle_state_data->inverter_enabled = false;
 
 	          osTimerStart(RTD_ButtonTimerHandle, RTD_BUTTON_PRESS_MILLISECONDS);

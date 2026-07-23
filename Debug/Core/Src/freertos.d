@@ -47,8 +47,9 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  ../Core/Inc/app/state_control.h \
  ../Core/Inc/config/vehicle_data_structs.h \
  ../Core/Inc/drivers/can_driver.h ../Core/Inc/app/process_adc.h \
- ../Core/Inc/app/calibration.h ../Core/Inc/can.h ../Core/Inc/main.h \
- ../Core/Inc/adc.h ../Core/Inc/tim.h ../Core/Inc/cmt_utils.h
+ ../Core/Inc/app/calibration.h ../Core/Inc/config/vcu_config.h \
+ ../Core/Inc/can.h ../Core/Inc/main.h ../Core/Inc/adc.h ../Core/Inc/tim.h \
+ ../Core/Inc/cmt_utils.h
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
@@ -100,6 +101,7 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
 ../Core/Inc/drivers/can_driver.h:
 ../Core/Inc/app/process_adc.h:
 ../Core/Inc/app/calibration.h:
+../Core/Inc/config/vcu_config.h:
 ../Core/Inc/can.h:
 ../Core/Inc/main.h:
 ../Core/Inc/adc.h:
