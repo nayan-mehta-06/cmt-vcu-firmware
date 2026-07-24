@@ -188,6 +188,9 @@ extern uint16_t raw_ADC_values[ADC_BUFFER_LENGTH];
 #define RTD_BUTTON_LIGHT_ON() HAL_GPIO_WritePin(RTD_Button_Light_Enable_GPIO_Port, RTD_Button_Light_Enable_Pin, GPIO_PIN_SET)
 #define RTD_BUTTON_LIGHT_OFF() HAL_GPIO_WritePin(RTD_Button_Light_Enable_GPIO_Port, RTD_Button_Light_Enable_Pin, GPIO_PIN_RESET)
 
+#define RTD_BUZZER_ON() HAL_GPIO_WritePin(RTD_Buzzer_Enable_GPIO_Port, RTD_Buzzer_Enable_Pin, GPIO_PIN_SET)
+#define RTD_BUZZER_OFF() HAL_GPIO_WritePin(RTD_Buzzer_Enable_GPIO_Port, RTD_Buzzer_Enable_Pin, GPIO_PIN_RESET)
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

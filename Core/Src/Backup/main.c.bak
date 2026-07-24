@@ -109,29 +109,6 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-#include "drivers/can_driver.h"
-#include "app/app_freertos.h"
-
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
-	CanMsg_t msg;
-
-	// Read CAN Message
-	if(HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, msg.data) != HAL_OK)
-	{
-		Error_Handler();
-	}
-
-	msg.StdId = RxHeader.StdId;
-	msg.ExtId = RxHeader.ExtId;
-	msg.DLC = RxHeader.DLC;
-	msg.can_line = (hcan->Instance == CAN1) ? 1 : 2;
-
-	if (osMessageQueuePut(CanMsgQueueHandle, &msg, QUEUE_MESSAGE_PRIORITY, CAN_MSG_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
-	{
-		p_queue_errors_data->can_msg_errors++;
-	}
-}
 /* USER CODE END 0 */
 
 /**
@@ -174,9 +151,8 @@ int main(void)
   MX_USART1_Init();
   /* USER CODE BEGIN 2 */
 
-  // Initalise CAN Filter Mask functions
-  User_MX_CAN1_Init();
-  User_MX_CAN2_Init();
+  // Start ADC
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*) raw_ADC_values, ADC_BUFFER_LENGTH);
 
   // Start timer 2, which triggers ADC readings
   HAL_TIM_Base_Start(&htim2);
@@ -184,8 +160,16 @@ int main(void)
   // Start timer 3 which ...
   HAL_TIM_Base_Start_IT(&htim1);
 
-  // Start ADC
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*) raw_ADC_values, ADC_BUFFER_LENGTH);
+
+  // Initialise CAN 1
+  //HAL_CAN_Init(&hcan1);
+
+  // Initialise CAN 2
+  //HAL_CAN_Init(&hcan2);
+
+  // Initalise CAN Filter Mask functions
+  User_MX_CAN1_Init();
+  User_MX_CAN2_Init();
 
 
   system_state = STATE_IDLE;
@@ -288,7 +272,7 @@ void SystemClock_Config(void)
 
 /**
   * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM6 interrupt took place, inside
+  * @note   This function is called  when TIM7 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
   * a global variable "uwTick" used as application time base.
   * @param  htim : TIM handle
@@ -299,7 +283,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6)
+  if (htim->Instance == TIM7)
   {
     HAL_IncTick();
   }

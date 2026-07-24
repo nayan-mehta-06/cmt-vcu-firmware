@@ -151,9 +151,8 @@ int main(void)
   MX_USART1_Init();
   /* USER CODE BEGIN 2 */
 
-  // Initalise CAN Filter Mask functions
-  User_MX_CAN1_Init();
-  User_MX_CAN2_Init();
+  // Start ADC
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*) raw_ADC_values, ADC_BUFFER_LENGTH);
 
   // Start timer 2, which triggers ADC readings
   HAL_TIM_Base_Start(&htim2);
@@ -161,8 +160,16 @@ int main(void)
   // Start timer 3 which ...
   HAL_TIM_Base_Start_IT(&htim1);
 
-  // Start ADC
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*) raw_ADC_values, ADC_BUFFER_LENGTH);
+
+  // Initialise CAN 1
+  //HAL_CAN_Init(&hcan1);
+
+  // Initialise CAN 2
+  //HAL_CAN_Init(&hcan2);
+
+  // Initalise CAN Filter Mask functions
+  User_MX_CAN1_Init();
+  User_MX_CAN2_Init();
 
 
   system_state = STATE_IDLE;
@@ -265,7 +272,7 @@ void SystemClock_Config(void)
 
 /**
   * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM6 interrupt took place, inside
+  * @note   This function is called  when TIM7 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
   * a global variable "uwTick" used as application time base.
   * @param  htim : TIM handle
@@ -276,7 +283,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6)
+  if (htim->Instance == TIM7)
   {
     HAL_IncTick();
   }

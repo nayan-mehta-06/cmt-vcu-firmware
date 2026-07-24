@@ -263,7 +263,7 @@ void MX_FREERTOS_Init(void) {
   StateTransitionQueueHandle = osMessageQueueNew (16, sizeof(SystemEvent_t), &StateTransitionQueue_attributes);
 
   /* creation of CanMsgQueue */
-  CanMsgQueueHandle = osMessageQueueNew (16, sizeof(CanMsg_t), &CanMsgQueue_attributes);
+  CanMsgQueueHandle = osMessageQueueNew (32, sizeof(CanMsg_t), &CanMsgQueue_attributes);
 
   /* creation of PedalsADCQueue */
   PedalsADCQueueHandle = osMessageQueueNew (16, sizeof(PedalsADC_t), &PedalsADCQueue_attributes);

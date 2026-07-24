@@ -19,10 +19,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "can.h"
-#include "config/can_ids.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "config/can_ids.h"
 /* USER CODE END 0 */
 
 CAN_HandleTypeDef hcan1;
@@ -42,7 +41,7 @@ void MX_CAN1_Init(void)
   hcan1.Instance = CAN1;
   hcan1.Init.Prescaler = 3;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
-  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_2TQ;
   hcan1.Init.TimeSeg1 = CAN_BS1_12TQ;
   hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
@@ -72,10 +71,10 @@ void MX_CAN2_Init(void)
 
   /* USER CODE END CAN2_Init 1 */
   hcan2.Instance = CAN2;
-  hcan2.Init.Prescaler = 3;
+  hcan2.Init.Prescaler = 5;
   hcan2.Init.Mode = CAN_MODE_NORMAL;
-  hcan2.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan2.Init.TimeSeg1 = CAN_BS1_12TQ;
+  hcan2.Init.SyncJumpWidth = CAN_SJW_2TQ;
+  hcan2.Init.TimeSeg1 = CAN_BS1_15TQ;
   hcan2.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan2.Init.TimeTriggeredMode = DISABLE;
   hcan2.Init.AutoBusOff = ENABLE;
@@ -256,15 +255,14 @@ void User_MX_CAN1_Init(void)
 
 	/* Configure the CAN Filter */
 	sFilterConfig1.FilterBank = 1;	//========== CRITICAL ==========// // This says we're current configuring filter #1 for CAN1
-	sFilterConfig1.FilterMode = CAN_FILTERMODE_IDMASK;
+	sFilterConfig1.FilterMode = CAN_FILTERMODE_IDLIST;
 	sFilterConfig1.FilterScale = CAN_FILTERSCALE_32BIT;
-	sFilterConfig1.FilterIdHigh = IVTS_ID<<5;
+	sFilterConfig1.FilterIdHigh = IVTS_U1<<5;
 	sFilterConfig1.FilterIdLow = 0x0000;
-	sFilterConfig1.FilterMaskIdHigh = 0x7FF << 5;
+	sFilterConfig1.FilterMaskIdHigh = IVTS_U2<<5;
 	sFilterConfig1.FilterMaskIdLow = 0x0000;
 	sFilterConfig1.FilterFIFOAssignment = CAN_RX_FIFO0; //========== CRITICAL ==========//
 	sFilterConfig1.FilterActivation = ENABLE;
-	sFilterConfig1.SlaveStartFilterBank = 14; //========== CRITICAL ==========//		// This setting tells where CAN2 filters are positioned
 
 	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig1) != HAL_OK)
 	{
@@ -288,7 +286,6 @@ void User_MX_CAN1_Init(void)
 	sFilterConfig2.FilterMaskIdLow = 0x0000;
 	sFilterConfig2.FilterFIFOAssignment = CAN_RX_FIFO0; //========== CRITICAL ==========//
 	sFilterConfig2.FilterActivation = ENABLE;
-	sFilterConfig2.SlaveStartFilterBank = 14; //========== CRITICAL ==========//		// This setting tells where CAN2 filters are positioned
 
 	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig2) != HAL_OK)
 	{
@@ -312,7 +309,6 @@ void User_MX_CAN1_Init(void)
 	sFilterConfig3.FilterMaskIdLow = 0x0000;
 	sFilterConfig3.FilterFIFOAssignment = CAN_RX_FIFO0; //========== CRITICAL ==========//
 	sFilterConfig3.FilterActivation = ENABLE;
-	sFilterConfig3.SlaveStartFilterBank = 14; //========== CRITICAL ==========//		// This setting tells where CAN2 filters are positioned
 
 
 	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig3) != HAL_OK)

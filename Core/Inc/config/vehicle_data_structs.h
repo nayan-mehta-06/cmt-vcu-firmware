@@ -24,6 +24,7 @@ typedef struct VehicleState
 {
 
 	float BMS_voltage;
+	float accy_voltage;
 	float inverter_voltage;
 	bool precharge_signal_sent;
 	bool precharge_voltage_met;

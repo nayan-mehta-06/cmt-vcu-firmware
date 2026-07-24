@@ -63,7 +63,7 @@ void Task_RTD(void *argument)
 
 	  inverter_voltage_percentage = (p_vehicle_state_data->inverter_voltage * 100) / (p_vehicle_state_data->BMS_voltage);
 
-	  if (inverter_voltage_percentage >= PRECHARGE_PERCENTAGE && p_vehicle_state_data->inverter_voltage > 300)
+	  if (inverter_voltage_percentage >= PRECHARGE_PERCENTAGE && p_vehicle_state_data->inverter_voltage > 40)
 	  {
 		  p_vehicle_state_data -> precharge_voltage_met = true;
 	  }
@@ -72,6 +72,9 @@ void Task_RTD(void *argument)
 		  p_vehicle_state_data -> precharge_voltage_met = false;
 	  }
 
+	  PRECHARGE_SIGNAL_ENABLE();
+	  p_vehicle_state_data -> precharge_signal_sent = true;
+	  /*
 	  if (p_vehicle_state_data -> precharge_voltage_met && p_inverter_status_1->system_ready)
 	  {
 		  PRECHARGE_SIGNAL_ENABLE();
@@ -82,8 +85,11 @@ void Task_RTD(void *argument)
 		  PRECHARGE_SIGNAL_DISABLE();
 		  p_vehicle_state_data -> precharge_signal_sent = false;
 	  }
+	  */
 
-	  precharge_complete_received = CHECK_PRECHARGE_COMPLETE_STATUS();
+	  //precharge_complete_received = CHECK_PRECHARGE_COMPLETE_STATUS();
+
+	  precharge_complete_received = true;
 
 	  if (precharge_complete_received && p_vehicle_state_data -> precharge_signal_sent)
 	  //if (p_vehicle_state_data -> precharge_signal_sent)
@@ -98,6 +104,7 @@ void Task_RTD(void *argument)
 	  if (p_vehicle_state_data -> precharge_complete)
 	  {
 		  p_inverter_setpoints_1 -> control |= (1 << AMK_CONTROL_DC_ON);
+		  INVERTER_ENABLE();
 	  }
 	  else
 	  {
@@ -140,6 +147,7 @@ void Task_RTD(void *argument)
 	      RTD_BUTTON_LIGHT_ON();
 	      if (button_pressed)
 	      {
+	    	  RTD_BUZZER_ON();
 	          osTimerStart(RTD_ButtonTimerHandle, RTD_BUTTON_PRESS_MILLISECONDS);
 	          system_event = EVENT_ENTER_RTD;
 	    	  if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
@@ -187,5 +195,6 @@ void RTD_ButtonTimer_Callback(void *argument)
 {
   /* USER CODE BEGIN RTD_button_timer_callback */
 	RTD_BUTTON_LIGHT_OFF();
+	RTD_BUZZER_ON();
   /* USER CODE END RTD_button_timer_callback */
 }

@@ -42,11 +42,20 @@ void Task_Process_CAN_Msgs(void *argument)
 					osMutexRelease(VehicleState_MutexHandle);
 				  break;
 
-				  case IVTS_ID:
+				  case IVTS_U1:
 					osMutexAcquire(VehicleState_MutexHandle, osWaitForever);
 
 						uint32_t inverterVoltageRaw = CONVERT_TO_32BIT(msg.data[2], msg.data[3], msg.data[4], msg.data[5]);
 						p_vehicle_state_data->inverter_voltage = inverterVoltageRaw / 1000.0f;
+
+					osMutexRelease(VehicleState_MutexHandle);
+				  break;
+
+				  case IVTS_U2:
+					osMutexAcquire(VehicleState_MutexHandle, osWaitForever);
+
+						uint32_t accyVoltageRaw = CONVERT_TO_32BIT(msg.data[2], msg.data[3], msg.data[4], msg.data[5]);
+						p_vehicle_state_data->accy_voltage = accyVoltageRaw / 1000.0f;
 
 					osMutexRelease(VehicleState_MutexHandle);
 				  break;

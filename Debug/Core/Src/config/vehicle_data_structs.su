@@ -1,4 +1,4 @@
 ../Core/Src/config/vehicle_data_structs.c:12:6:initialise_vehicle_state_data	16	static
-../Core/Src/config/vehicle_data_structs.c:24:6:initialise_queue_errors	16	static
-../Core/Src/config/vehicle_data_structs.c:31:6:initialise_pedals_state	16	static
-../Core/Src/config/vehicle_data_structs.c:38:6:initialise_testing_VCU_data	16	static
+../Core/Src/config/vehicle_data_structs.c:25:6:initialise_queue_errors	16	static
+../Core/Src/config/vehicle_data_structs.c:32:6:initialise_pedals_state	16	static
+../Core/Src/config/vehicle_data_structs.c:39:6:initialise_testing_VCU_data	16	static
