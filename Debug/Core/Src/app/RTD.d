@@ -1,9 +1,9 @@
 Core/Src/app/RTD.o: ../Core/Src/app/RTD.c ../Core/Inc/app/RTD.h \
  ../Core/Inc/config/vehicle_data_structs.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Core/Inc/app/state_control.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
@@ -43,19 +43,17 @@ Core/Src/app/RTD.o: ../Core/Src/app/RTD.c ../Core/Inc/app/RTD.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_usart.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/config/amk_data_structs.h ../Core/Inc/can.h \
- ../Core/Inc/main.h ../Core/Inc/adc.h ../Core/Inc/tim.h \
- ../Core/Inc/cmt_utils.h ../Core/Inc/app/app_freertos.h \
- ../Core/Inc/app/inverter_control.h
+ ../Core/Inc/config/amk_data_structs.h ../Core/Inc/config/vcu_config.h \
+ ../Core/Inc/cmt_utils.h ../Core/Inc/app/app_freertos.h
 ../Core/Inc/app/RTD.h:
 ../Core/Inc/config/vehicle_data_structs.h:
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 ../Core/Inc/app/state_control.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
-../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
@@ -96,14 +94,10 @@ Core/Src/app/RTD.o: ../Core/Src/app/RTD.c ../Core/Inc/app/RTD.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
-../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_usart.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 ../Core/Inc/config/amk_data_structs.h:
-../Core/Inc/can.h:
-../Core/Inc/main.h:
-../Core/Inc/adc.h:
-../Core/Inc/tim.h:
+../Core/Inc/config/vcu_config.h:
 ../Core/Inc/cmt_utils.h:
 ../Core/Inc/app/app_freertos.h:
-../Core/Inc/app/inverter_control.h:

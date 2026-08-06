@@ -13,7 +13,8 @@
 
 
 void Task_RTD(void *argument);
-void RTD_button_timer_callback(void *argument);
+void RTD_Button_Timer_Callback(void *argument);
+void RTD_Buzzer_Timer_Callback(void *argument);
 
 extern QueueErrors_t* p_queue_errors;
 extern SystemState_t system_state;

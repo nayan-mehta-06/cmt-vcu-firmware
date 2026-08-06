@@ -7,17 +7,20 @@
 C_SRCS += \
 ../Core/Src/drivers/adc_driver.c \
 ../Core/Src/drivers/can_driver.c \
-../Core/Src/drivers/cmt_M95512.c 
+../Core/Src/drivers/cmt_M95512.c \
+../Core/Src/drivers/usart_driver.c 
 
 OBJS += \
 ./Core/Src/drivers/adc_driver.o \
 ./Core/Src/drivers/can_driver.o \
-./Core/Src/drivers/cmt_M95512.o 
+./Core/Src/drivers/cmt_M95512.o \
+./Core/Src/drivers/usart_driver.o 
 
 C_DEPS += \
 ./Core/Src/drivers/adc_driver.d \
 ./Core/Src/drivers/can_driver.d \
-./Core/Src/drivers/cmt_M95512.d 
+./Core/Src/drivers/cmt_M95512.d \
+./Core/Src/drivers/usart_driver.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -27,7 +30,7 @@ Core/Src/drivers/%.o Core/Src/drivers/%.su Core/Src/drivers/%.cyclo: ../Core/Src
 clean: clean-Core-2f-Src-2f-drivers
 
 clean-Core-2f-Src-2f-drivers:
-	-$(RM) ./Core/Src/drivers/adc_driver.cyclo ./Core/Src/drivers/adc_driver.d ./Core/Src/drivers/adc_driver.o ./Core/Src/drivers/adc_driver.su ./Core/Src/drivers/can_driver.cyclo ./Core/Src/drivers/can_driver.d ./Core/Src/drivers/can_driver.o ./Core/Src/drivers/can_driver.su ./Core/Src/drivers/cmt_M95512.cyclo ./Core/Src/drivers/cmt_M95512.d ./Core/Src/drivers/cmt_M95512.o ./Core/Src/drivers/cmt_M95512.su
+	-$(RM) ./Core/Src/drivers/adc_driver.cyclo ./Core/Src/drivers/adc_driver.d ./Core/Src/drivers/adc_driver.o ./Core/Src/drivers/adc_driver.su ./Core/Src/drivers/can_driver.cyclo ./Core/Src/drivers/can_driver.d ./Core/Src/drivers/can_driver.o ./Core/Src/drivers/can_driver.su ./Core/Src/drivers/cmt_M95512.cyclo ./Core/Src/drivers/cmt_M95512.d ./Core/Src/drivers/cmt_M95512.o ./Core/Src/drivers/cmt_M95512.su ./Core/Src/drivers/usart_driver.cyclo ./Core/Src/drivers/usart_driver.d ./Core/Src/drivers/usart_driver.o ./Core/Src/drivers/usart_driver.su
 
 .PHONY: clean-Core-2f-Src-2f-drivers
 

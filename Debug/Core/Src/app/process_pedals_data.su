@@ -1,2 +1,9 @@
-../Core/Src/app/process_pedals_data.c:20:6:Task_Process_Pedals_Data	32	static
-../Core/Src/app/process_pedals_data.c:54:9:calc_adc_percentage	16	static
+../Core/Src/app/process_pedals_data.c:22:6:Task_Process_Pedals_Data	88	static
+../Core/Src/app/process_pedals_data.c:208:6:APPS_1_OutOfRange_Timer_Callback	16	static
+../Core/Src/app/process_pedals_data.c:216:6:APPS_2_OutOfRange_Timer_Callback	16	static
+../Core/Src/app/process_pedals_data.c:224:6:BSE_OutOfRange_Timer_Callback	16	static
+../Core/Src/app/process_pedals_data.c:232:6:APPS_Implausibility_Timer_Callback	16	static
+../Core/Src/app/process_pedals_data.c:237:9:calc_adc_percentage	16	static
+../Core/Src/app/process_pedals_data.c:250:15:pedal_position_sensor_out_of_range_fault_check	24	static
+../Core/Src/app/process_pedals_data.c:271:6:Get_Previous_Pedals_Faults_Data	16	static
+../Core/Src/app/process_pedals_data.c:280:6:Set_New_Pedals_Faults_Data	16	static

@@ -161,8 +161,6 @@ void Error_Handler(void);
 
 #define CAN_MSG_QUEUE_TIMEOUT_MILLISECONDS pdMS_TO_TICKS(0)
 #define ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS pdMS_TO_TICKS(10)
-
-#define RTD_BUTTON_PRESS_MILLISECONDS pdMS_TO_TICKS(200)
 // Try reduce to 10Hz for traction control
 
 
@@ -190,6 +188,9 @@ extern uint16_t raw_ADC_values[ADC_BUFFER_LENGTH];
 
 #define RTD_BUZZER_ON() HAL_GPIO_WritePin(RTD_Buzzer_Enable_GPIO_Port, RTD_Buzzer_Enable_Pin, GPIO_PIN_SET)
 #define RTD_BUZZER_OFF() HAL_GPIO_WritePin(RTD_Buzzer_Enable_GPIO_Port, RTD_Buzzer_Enable_Pin, GPIO_PIN_RESET)
+
+#define BRAKE_LIGHT_ON() HAL_GPIO_WritePin(Brake_Light_Enable_GPIO_Port, Brake_Light_Enable_Pin, GPIO_PIN_SET)
+#define BRAKE_LIGHT_OFF() HAL_GPIO_WritePin(Brake_Light_Enable_GPIO_Port, Brake_Light_Enable_Pin, GPIO_PIN_RESET)
 
 /* USER CODE END Private defines */
 

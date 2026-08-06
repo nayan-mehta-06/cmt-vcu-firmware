@@ -15,6 +15,8 @@
 extern osMessageQueueId_t CanMsgQueueHandle;
 extern osMessageQueueId_t StateTransitionQueueHandle;
 extern osMessageQueueId_t PedalsADCQueueHandle;
+extern osMessageQueueId_t CalibrationDataQueueHandle;
+extern osMessageQueueId_t ADCsToLogQueueHandle;
 
 extern osMutexId_t SystemState_MutexHandle;
 
@@ -24,12 +26,18 @@ extern osMutexId_t InverterData1_MutexHandle;
 extern osMutexId_t InverterData2_MutexHandle;
 extern osMutexId_t PedalsState_MutexHandle;
 extern osMutexId_t InverterData1_MutexHandle;
+extern osMutexId_t PedalsFaults_MutexHandle;
 
-extern osTimerId_t RTD_ButtonTimerHandle;
-extern osTimerId_t InverterCAN_TransmitHandle;
+extern osTimerId_t RTD_Button_TimerHandle;
+extern osTimerId_t InverterCAN_Transmit_TimerHandle;
+extern osTimerId_t RTD_Buzzer_TimerHandle;
+extern osTimerId_t APPS_1_OutOfRange_TimerHandle;
+extern osTimerId_t APPS_2_OutOfRange_TimerHandle;
+extern osTimerId_t BSE_OutOfRange_TimerHandle;
+extern osTimerId_t APPS_Implausibility_TimerHandle;
 
 
-void Task_Process_CAN_Msgs(void *argument);
-
+extern osEventFlagsId_t CalibrationDataReceived_EventHandle;
+extern osEventFlagsId_t PedalsOutOfRangeFault_EventHandle;
 
 #endif /* INC_APP_APP_FREERTOS_H_ */

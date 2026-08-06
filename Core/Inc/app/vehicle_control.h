@@ -15,8 +15,11 @@
 extern PedalsState_t* p_pedals_state_data;
 extern InverterSetpoints_t* p_inverter_setpoints_1;
 extern SystemState_t system_state;
+extern VehicleState_t* p_vehicle_state_data;
 
 void Task_Vehicle_Ctrl(void *argument);
-void InverterCAN_TransmitCallback(void *argument);
+void InverterCAN_Transmit_Callback(void *argument);
+
+bool BrakesEngagedCheck(uint8_t brake_pedal_position_percentage, uint8_t brakes_engaged_threshold_percentage);
 
 #endif /* INC_APP_VEHICLE_CONTROL_H_ */

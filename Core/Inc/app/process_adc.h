@@ -13,11 +13,22 @@
 typedef struct PedalsADC
 {
 
-	uint16_t apps1_adc;
-	uint16_t apps2_adc;
+	uint16_t apps_1_adc;
+	uint16_t apps_2_adc;
 	uint16_t bse_adc;
 
 } PedalsADC_t;
+
+typedef struct ADCsToLog
+{
+
+	uint16_t bpps_1_adc;
+	uint16_t bpps_2_adc;
+	uint16_t bspd_cs_adc;
+	uint16_t sas_adc;
+	uint16_t spare_adc;
+
+} ADCsToLog_t;
 
 void Task_Process_ADC(void *argument);
 

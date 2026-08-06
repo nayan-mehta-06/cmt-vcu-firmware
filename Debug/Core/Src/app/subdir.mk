@@ -7,35 +7,41 @@
 C_SRCS += \
 ../Core/Src/app/RTD.c \
 ../Core/Src/app/calibration.c \
-../Core/Src/app/cmt_utils.c \
+../Core/Src/app/handle_gui.c \
 ../Core/Src/app/inverter_control.c \
+../Core/Src/app/log_vehicle_data.c \
 ../Core/Src/app/process_adc.c \
 ../Core/Src/app/process_can_msgs.c \
 ../Core/Src/app/process_pedals_data.c \
 ../Core/Src/app/state_control.c \
-../Core/Src/app/vehicle.control.c 
+../Core/Src/app/vehicle_control.c \
+../Core/Src/app/vehicle_fault_handler.c 
 
 OBJS += \
 ./Core/Src/app/RTD.o \
 ./Core/Src/app/calibration.o \
-./Core/Src/app/cmt_utils.o \
+./Core/Src/app/handle_gui.o \
 ./Core/Src/app/inverter_control.o \
+./Core/Src/app/log_vehicle_data.o \
 ./Core/Src/app/process_adc.o \
 ./Core/Src/app/process_can_msgs.o \
 ./Core/Src/app/process_pedals_data.o \
 ./Core/Src/app/state_control.o \
-./Core/Src/app/vehicle.control.o 
+./Core/Src/app/vehicle_control.o \
+./Core/Src/app/vehicle_fault_handler.o 
 
 C_DEPS += \
 ./Core/Src/app/RTD.d \
 ./Core/Src/app/calibration.d \
-./Core/Src/app/cmt_utils.d \
+./Core/Src/app/handle_gui.d \
 ./Core/Src/app/inverter_control.d \
+./Core/Src/app/log_vehicle_data.d \
 ./Core/Src/app/process_adc.d \
 ./Core/Src/app/process_can_msgs.d \
 ./Core/Src/app/process_pedals_data.d \
 ./Core/Src/app/state_control.d \
-./Core/Src/app/vehicle.control.d 
+./Core/Src/app/vehicle_control.d \
+./Core/Src/app/vehicle_fault_handler.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -45,7 +51,7 @@ Core/Src/app/%.o Core/Src/app/%.su Core/Src/app/%.cyclo: ../Core/Src/app/%.c Cor
 clean: clean-Core-2f-Src-2f-app
 
 clean-Core-2f-Src-2f-app:
-	-$(RM) ./Core/Src/app/RTD.cyclo ./Core/Src/app/RTD.d ./Core/Src/app/RTD.o ./Core/Src/app/RTD.su ./Core/Src/app/calibration.cyclo ./Core/Src/app/calibration.d ./Core/Src/app/calibration.o ./Core/Src/app/calibration.su ./Core/Src/app/cmt_utils.cyclo ./Core/Src/app/cmt_utils.d ./Core/Src/app/cmt_utils.o ./Core/Src/app/cmt_utils.su ./Core/Src/app/inverter_control.cyclo ./Core/Src/app/inverter_control.d ./Core/Src/app/inverter_control.o ./Core/Src/app/inverter_control.su ./Core/Src/app/process_adc.cyclo ./Core/Src/app/process_adc.d ./Core/Src/app/process_adc.o ./Core/Src/app/process_adc.su ./Core/Src/app/process_can_msgs.cyclo ./Core/Src/app/process_can_msgs.d ./Core/Src/app/process_can_msgs.o ./Core/Src/app/process_can_msgs.su ./Core/Src/app/process_pedals_data.cyclo ./Core/Src/app/process_pedals_data.d ./Core/Src/app/process_pedals_data.o ./Core/Src/app/process_pedals_data.su ./Core/Src/app/state_control.cyclo ./Core/Src/app/state_control.d ./Core/Src/app/state_control.o ./Core/Src/app/state_control.su ./Core/Src/app/vehicle.control.cyclo ./Core/Src/app/vehicle.control.d ./Core/Src/app/vehicle.control.o ./Core/Src/app/vehicle.control.su
+	-$(RM) ./Core/Src/app/RTD.cyclo ./Core/Src/app/RTD.d ./Core/Src/app/RTD.o ./Core/Src/app/RTD.su ./Core/Src/app/calibration.cyclo ./Core/Src/app/calibration.d ./Core/Src/app/calibration.o ./Core/Src/app/calibration.su ./Core/Src/app/handle_gui.cyclo ./Core/Src/app/handle_gui.d ./Core/Src/app/handle_gui.o ./Core/Src/app/handle_gui.su ./Core/Src/app/inverter_control.cyclo ./Core/Src/app/inverter_control.d ./Core/Src/app/inverter_control.o ./Core/Src/app/inverter_control.su ./Core/Src/app/log_vehicle_data.cyclo ./Core/Src/app/log_vehicle_data.d ./Core/Src/app/log_vehicle_data.o ./Core/Src/app/log_vehicle_data.su ./Core/Src/app/process_adc.cyclo ./Core/Src/app/process_adc.d ./Core/Src/app/process_adc.o ./Core/Src/app/process_adc.su ./Core/Src/app/process_can_msgs.cyclo ./Core/Src/app/process_can_msgs.d ./Core/Src/app/process_can_msgs.o ./Core/Src/app/process_can_msgs.su ./Core/Src/app/process_pedals_data.cyclo ./Core/Src/app/process_pedals_data.d ./Core/Src/app/process_pedals_data.o ./Core/Src/app/process_pedals_data.su ./Core/Src/app/state_control.cyclo ./Core/Src/app/state_control.d ./Core/Src/app/state_control.o ./Core/Src/app/state_control.su ./Core/Src/app/vehicle_control.cyclo ./Core/Src/app/vehicle_control.d ./Core/Src/app/vehicle_control.o ./Core/Src/app/vehicle_control.su ./Core/Src/app/vehicle_fault_handler.cyclo ./Core/Src/app/vehicle_fault_handler.d ./Core/Src/app/vehicle_fault_handler.o ./Core/Src/app/vehicle_fault_handler.su
 
 .PHONY: clean-Core-2f-Src-2f-app
 

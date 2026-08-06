@@ -1,4 +1,6 @@
-../Core/Src/config/vehicle_data_structs.c:12:6:initialise_vehicle_state_data	1
-../Core/Src/config/vehicle_data_structs.c:25:6:initialise_queue_errors	1
-../Core/Src/config/vehicle_data_structs.c:32:6:initialise_pedals_state	1
-../Core/Src/config/vehicle_data_structs.c:39:6:initialise_testing_VCU_data	1
+../Core/Src/config/vehicle_data_structs.c:13:6:initialise_vehicle_state_data	1
+../Core/Src/config/vehicle_data_structs.c:29:6:initialise_queue_errors	1
+../Core/Src/config/vehicle_data_structs.c:38:6:initialise_pedals_state	1
+../Core/Src/config/vehicle_data_structs.c:46:6:initialise_pedals_faults	1
+../Core/Src/config/vehicle_data_structs.c:55:6:initialise_testing_VCU_data	1
+../Core/Src/config/vehicle_data_structs.c:72:6:initialise_freertos_task_stack_usage	1

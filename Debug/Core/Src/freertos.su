@@ -1,3 +1,3 @@
-../Core/Src/freertos.c:203:6:vApplicationStackOverflowHook	16	static
-../Core/Src/freertos.c:216:6:MX_FREERTOS_Init	8	static
-../Core/Src/freertos.c:317:6:start_task	16	static
+../Core/Src/freertos.c:288:6:vApplicationStackOverflowHook	16	static
+../Core/Src/freertos.c:301:6:MX_FREERTOS_Init	8	static
+../Core/Src/freertos.c:441:6:Task_LogTaskStackUsage	24	static

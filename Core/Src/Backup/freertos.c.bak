@@ -27,9 +27,15 @@
 /* USER CODE BEGIN Includes */
 
 #include "app/state_control.h"
-#include "drivers/can_driver.h"
 #include "app/process_adc.h"
 #include "app/calibration.h"
+#include "app/handle_gui.h"
+#include "app/process_pedals_data.h"
+#include "app/RTD.h"
+#include "app/vehicle_control.h"
+#include "app/log_vehicle_data.h"
+#include "app/vehicle_fault_handler.h"
+#include "drivers/can_driver.h"
 
 #include "config/vcu_config.h"
 
@@ -61,12 +67,12 @@
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
-/* Definitions for task */
-osThreadId_t taskHandle;
-const osThreadAttr_t task_attributes = {
-  .name = "task",
+/* Definitions for LogTaskStackUsage */
+osThreadId_t LogTaskStackUsageHandle;
+const osThreadAttr_t LogTaskStackUsage_attributes = {
+  .name = "LogTaskStackUsage",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for CalibrateTask */
 osThreadId_t CalibrateTaskHandle;
@@ -117,6 +123,27 @@ const osThreadAttr_t ProcessCAN_Task_attributes = {
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for HandleGUI_Task */
+osThreadId_t HandleGUI_TaskHandle;
+const osThreadAttr_t HandleGUI_Task_attributes = {
+  .name = "HandleGUI_Task",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal,
+};
+/* Definitions for LogVehicleData_Task */
+osThreadId_t LogVehicleData_TaskHandle;
+const osThreadAttr_t LogVehicleData_Task_attributes = {
+  .name = "LogVehicleData_Task",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for VehicleFaultHandler_Task */
+osThreadId_t VehicleFaultHandler_TaskHandle;
+const osThreadAttr_t VehicleFaultHandler_Task_attributes = {
+  .name = "VehicleFaultHandler_Task",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* Definitions for StateTransitionQueue */
 osMessageQueueId_t StateTransitionQueueHandle;
 const osMessageQueueAttr_t StateTransitionQueue_attributes = {
@@ -132,15 +159,45 @@ osMessageQueueId_t PedalsADCQueueHandle;
 const osMessageQueueAttr_t PedalsADCQueue_attributes = {
   .name = "PedalsADCQueue"
 };
-/* Definitions for RTD_ButtonTimer */
-osTimerId_t RTD_ButtonTimerHandle;
-const osTimerAttr_t RTD_ButtonTimer_attributes = {
-  .name = "RTD_ButtonTimer"
+/* Definitions for CalibrationDataQueue */
+osMessageQueueId_t CalibrationDataQueueHandle;
+const osMessageQueueAttr_t CalibrationDataQueue_attributes = {
+  .name = "CalibrationDataQueue"
 };
-/* Definitions for InverterCAN_Transmit */
-osTimerId_t InverterCAN_TransmitHandle;
-const osTimerAttr_t InverterCAN_Transmit_attributes = {
-  .name = "InverterCAN_Transmit"
+/* Definitions for ADCsToLogQueue */
+osMessageQueueId_t ADCsToLogQueueHandle;
+const osMessageQueueAttr_t ADCsToLogQueue_attributes = {
+  .name = "ADCsToLogQueue"
+};
+/* Definitions for RTD_Button_Timer */
+osTimerId_t RTD_Button_TimerHandle;
+const osTimerAttr_t RTD_Button_Timer_attributes = {
+  .name = "RTD_Button_Timer"
+};
+/* Definitions for InverterCAN_Transmit_Timer */
+osTimerId_t InverterCAN_Transmit_TimerHandle;
+const osTimerAttr_t InverterCAN_Transmit_Timer_attributes = {
+  .name = "InverterCAN_Transmit_Timer"
+};
+/* Definitions for RTD_Buzzer_Timer */
+osTimerId_t RTD_Buzzer_TimerHandle;
+const osTimerAttr_t RTD_Buzzer_Timer_attributes = {
+  .name = "RTD_Buzzer_Timer"
+};
+/* Definitions for APPS_OutOfRange_Timer */
+osTimerId_t APPS_OutOfRange_TimerHandle;
+const osTimerAttr_t APPS_OutOfRange_Timer_attributes = {
+  .name = "APPS_OutOfRange_Timer"
+};
+/* Definitions for BSE_OutOfRange_Timer */
+osTimerId_t BSE_OutOfRange_TimerHandle;
+const osTimerAttr_t BSE_OutOfRange_Timer_attributes = {
+  .name = "BSE_OutOfRange_Timer"
+};
+/* Definitions for APPS_Implausibility_Timer */
+osTimerId_t APPS_Implausibility_TimerHandle;
+const osTimerAttr_t APPS_Implausibility_Timer_attributes = {
+  .name = "APPS_Implausibility_Timer"
 };
 /* Definitions for CAN1_Mutex */
 osMutexId_t CAN1_MutexHandle;
@@ -177,13 +234,28 @@ osMutexId_t PedalsState_MutexHandle;
 const osMutexAttr_t PedalsState_Mutex_attributes = {
   .name = "PedalsState_Mutex"
 };
+/* Definitions for PedalsFaults_Mutex */
+osMutexId_t PedalsFaults_MutexHandle;
+const osMutexAttr_t PedalsFaults_Mutex_attributes = {
+  .name = "PedalsFaults_Mutex"
+};
+/* Definitions for CalibrationDataReceived_Event */
+osEventFlagsId_t CalibrationDataReceived_EventHandle;
+const osEventFlagsAttr_t CalibrationDataReceived_Event_attributes = {
+  .name = "CalibrationDataReceived_Event"
+};
+/* Definitions for PedalsOutOfRangeFault_Event */
+osEventFlagsId_t PedalsOutOfRangeFault_EventHandle;
+const osEventFlagsAttr_t PedalsOutOfRangeFault_Event_attributes = {
+  .name = "PedalsOutOfRangeFault_Event"
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 
 /* USER CODE END FunctionPrototypes */
 
-void start_task(void *argument);
+void Task_LogTaskStackUsage(void *argument);
 extern void Task_Car_Calibration(void *argument);
 extern void Task_RTD(void *argument);
 extern void Task_Process_ADC(void *argument);
@@ -191,8 +263,15 @@ extern void Task_Process_Pedals_Data(void *argument);
 extern void Task_Vehicle_Ctrl(void *argument);
 extern void Task_State_Ctrl(void *argument);
 extern void Task_Process_CAN_Msgs(void *argument);
-extern void RTD_ButtonTimer_Callback(void *argument);
-extern void InverterCAN_TransmitCallback(void *argument);
+extern void Task_HandleGUI(void *argument);
+extern void Task_LogVehicleData(void *argument);
+extern void Task_VehicleFaultHandler(void *argument);
+extern void RTD_Button_Timer_Callback(void *argument);
+extern void InverterCAN_Transmit_Callback(void *argument);
+extern void RTD_Buzzer_Timer_Callback(void *argument);
+extern void APPS_OutOfRange_Timer_Callback(void *argument);
+extern void BSE_OutOfRange_Timer_Callback(void *argument);
+extern void APPS_Implausibility_Timer_Callback(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -239,6 +318,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of PedalsState_Mutex */
   PedalsState_MutexHandle = osMutexNew(&PedalsState_Mutex_attributes);
 
+  /* creation of PedalsFaults_Mutex */
+  PedalsFaults_MutexHandle = osMutexNew(&PedalsFaults_Mutex_attributes);
+
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
@@ -248,11 +330,23 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* Create the timer(s) */
-  /* creation of RTD_ButtonTimer */
-  RTD_ButtonTimerHandle = osTimerNew(RTD_ButtonTimer_Callback, osTimerOnce, NULL, &RTD_ButtonTimer_attributes);
+  /* creation of RTD_Button_Timer */
+  RTD_Button_TimerHandle = osTimerNew(RTD_Button_Timer_Callback, osTimerOnce, NULL, &RTD_Button_Timer_attributes);
 
-  /* creation of InverterCAN_Transmit */
-  InverterCAN_TransmitHandle = osTimerNew(InverterCAN_TransmitCallback, osTimerPeriodic, NULL, &InverterCAN_Transmit_attributes);
+  /* creation of InverterCAN_Transmit_Timer */
+  InverterCAN_Transmit_TimerHandle = osTimerNew(InverterCAN_Transmit_Callback, osTimerPeriodic, NULL, &InverterCAN_Transmit_Timer_attributes);
+
+  /* creation of RTD_Buzzer_Timer */
+  RTD_Buzzer_TimerHandle = osTimerNew(RTD_Buzzer_Timer_Callback, osTimerOnce, NULL, &RTD_Buzzer_Timer_attributes);
+
+  /* creation of APPS_OutOfRange_Timer */
+  APPS_OutOfRange_TimerHandle = osTimerNew(APPS_OutOfRange_Timer_Callback, osTimerOnce, NULL, &APPS_OutOfRange_Timer_attributes);
+
+  /* creation of BSE_OutOfRange_Timer */
+  BSE_OutOfRange_TimerHandle = osTimerNew(BSE_OutOfRange_Timer_Callback, osTimerOnce, NULL, &BSE_OutOfRange_Timer_attributes);
+
+  /* creation of APPS_Implausibility_Timer */
+  APPS_Implausibility_TimerHandle = osTimerNew(APPS_Implausibility_Timer_Callback, osTimerOnce, NULL, &APPS_Implausibility_Timer_attributes);
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
@@ -260,21 +354,27 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* creation of StateTransitionQueue */
-  StateTransitionQueueHandle = osMessageQueueNew (16, sizeof(SystemEvent_t), &StateTransitionQueue_attributes);
+  StateTransitionQueueHandle = osMessageQueueNew (8, sizeof(SystemEvent_t), &StateTransitionQueue_attributes);
 
   /* creation of CanMsgQueue */
   CanMsgQueueHandle = osMessageQueueNew (32, sizeof(CanMsg_t), &CanMsgQueue_attributes);
 
   /* creation of PedalsADCQueue */
-  PedalsADCQueueHandle = osMessageQueueNew (16, sizeof(PedalsADC_t), &PedalsADCQueue_attributes);
+  PedalsADCQueueHandle = osMessageQueueNew (8, sizeof(PedalsADC_t), &PedalsADCQueue_attributes);
+
+  /* creation of CalibrationDataQueue */
+  CalibrationDataQueueHandle = osMessageQueueNew (8, sizeof(CalibrationData_t), &CalibrationDataQueue_attributes);
+
+  /* creation of ADCsToLogQueue */
+  ADCsToLogQueueHandle = osMessageQueueNew (8, sizeof(ADCsToLog_t), &ADCsToLogQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of task */
-  taskHandle = osThreadNew(start_task, NULL, &task_attributes);
+  /* creation of LogTaskStackUsage */
+  LogTaskStackUsageHandle = osThreadNew(Task_LogTaskStackUsage, NULL, &LogTaskStackUsage_attributes);
 
   /* creation of CalibrateTask */
   CalibrateTaskHandle = osThreadNew(Task_Car_Calibration, NULL, &CalibrateTask_attributes);
@@ -297,9 +397,24 @@ void MX_FREERTOS_Init(void) {
   /* creation of ProcessCAN_Task */
   ProcessCAN_TaskHandle = osThreadNew(Task_Process_CAN_Msgs, NULL, &ProcessCAN_Task_attributes);
 
+  /* creation of HandleGUI_Task */
+  HandleGUI_TaskHandle = osThreadNew(Task_HandleGUI, NULL, &HandleGUI_Task_attributes);
+
+  /* creation of LogVehicleData_Task */
+  LogVehicleData_TaskHandle = osThreadNew(Task_LogVehicleData, NULL, &LogVehicleData_Task_attributes);
+
+  /* creation of VehicleFaultHandler_Task */
+  VehicleFaultHandler_TaskHandle = osThreadNew(Task_VehicleFaultHandler, NULL, &VehicleFaultHandler_Task_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
+
+  /* creation of CalibrationDataReceived_Event */
+  CalibrationDataReceived_EventHandle = osEventFlagsNew(&CalibrationDataReceived_Event_attributes);
+
+  /* creation of PedalsOutOfRangeFault_Event */
+  PedalsOutOfRangeFault_EventHandle = osEventFlagsNew(&PedalsOutOfRangeFault_Event_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
@@ -307,26 +422,58 @@ void MX_FREERTOS_Init(void) {
 
 }
 
-/* USER CODE BEGIN Header_start_task */
+/* USER CODE BEGIN Header_Task_LogTaskStackUsage */
 /**
-  * @brief  Function implementing the task thread.
+  * @brief  Function implementing the LogTaskStackUsage thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_start_task */
-void start_task(void *argument)
+/* USER CODE END Header_Task_LogTaskStackUsage */
+void Task_LogTaskStackUsage(void *argument)
 {
-  /* USER CODE BEGIN start_task */
+  /* USER CODE BEGIN Task_LogTaskStackUsage */
   /* Infinite loop */
   for(;;)
   {
+	  p_freertos_task_stack_usage->used_bytes_LogTaskStackUsage =
+	        LogTaskStackUsage_attributes.stack_size - osThreadGetStackSpace(LogTaskStackUsageHandle);
+
+	  p_freertos_task_stack_usage->used_bytes_CalibrateTask =
+	        CalibrateTask_attributes.stack_size - osThreadGetStackSpace(CalibrateTaskHandle);
+
+	  p_freertos_task_stack_usage->used_bytes_RTD_Task =
+	        RTD_Task_attributes.stack_size - osThreadGetStackSpace(RTD_TaskHandle);
+
+	  p_freertos_task_stack_usage->used_bytes_ProcessADC_Task =
+	        ProcessADC_Task_attributes.stack_size - osThreadGetStackSpace(ProcessADC_TaskHandle);
+
+	  p_freertos_task_stack_usage->used_bytes_PedalsDataTask =
+	        PedalsDataTask_attributes.stack_size - osThreadGetStackSpace(PedalsDataTaskHandle);
+
+	  p_freertos_task_stack_usage->used_bytes_VehicleCtrlTask =
+	        VehicleCtrlTask_attributes.stack_size - osThreadGetStackSpace(VehicleCtrlTaskHandle);
+
+	  p_freertos_task_stack_usage->used_bytes_StateCtrlTask =
+	        StateCtrlTask_attributes.stack_size - osThreadGetStackSpace(StateCtrlTaskHandle);
+
+	  p_freertos_task_stack_usage->used_bytes_ProcessCAN_Task =
+	        ProcessCAN_Task_attributes.stack_size - osThreadGetStackSpace(ProcessCAN_TaskHandle);
+
+	  p_freertos_task_stack_usage->used_bytes_HandleGUI_Task =
+	        HandleGUI_Task_attributes.stack_size - osThreadGetStackSpace(HandleGUI_TaskHandle);
+
+	  p_freertos_task_stack_usage->used_bytes_LogVehicleData_Task =
+	        LogVehicleData_Task_attributes.stack_size - osThreadGetStackSpace(LogVehicleData_TaskHandle);
+
+	  p_freertos_task_stack_usage->used_bytes_VehicleFaultHandler_Task =
+	        VehicleFaultHandler_Task_attributes.stack_size - osThreadGetStackSpace(VehicleFaultHandler_TaskHandle);
+
     osDelay(1);
   }
-  /* USER CODE END start_task */
+  /* USER CODE END Task_LogTaskStackUsage */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
 /* USER CODE END Application */
 

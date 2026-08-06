@@ -66,11 +66,17 @@ InverterSetpoints_t* p_inverter_setpoints_2 = &inverter_setpoints_2;
 PedalsState_t pedals_state_data;
 PedalsState_t* p_pedals_state_data = &pedals_state_data;
 
+PedalsFaults_t pedals_faults_data;
+PedalsFaults_t* p_pedals_faults_data = &pedals_faults_data;
+
 QueueErrors_t queue_errors_data;
 QueueErrors_t* p_queue_errors_data = &queue_errors_data;
 
-TestingVCU_t p_testing_vcu_main;
-TestingVCU_t* p_testing_vcu_data = &p_testing_vcu_main;
+TestingVCU_t testing_vcu_data;
+TestingVCU_t* p_testing_vcu_data = &testing_vcu_data;
+
+FreertosTaskStackUsage_t freertos_task_stack_usage;
+FreertosTaskStackUsage_t* p_freertos_task_stack_usage = &freertos_task_stack_usage;
 
 // CAN definitions
 CAN_TxHeaderTypeDef TxHeader;
@@ -148,7 +154,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM1_Init();
-  MX_USART1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
   // Start ADC
@@ -187,9 +193,13 @@ int main(void)
 
   initialise_pedals_state(p_pedals_state_data);
 
+  initialise_pedals_faults(p_pedals_faults_data);
+
   initialise_queue_errors(p_queue_errors_data);
 
   initialise_testing_VCU_data(p_testing_vcu_data);
+
+  initialise_freertos_task_stack_usage(p_freertos_task_stack_usage);
 
   /* USER CODE END 2 */
 

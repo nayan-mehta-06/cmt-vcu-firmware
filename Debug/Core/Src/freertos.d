@@ -41,15 +41,18 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_usart.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Core/Inc/app/state_control.h \
- ../Core/Inc/config/vehicle_data_structs.h \
- ../Core/Inc/drivers/can_driver.h ../Core/Inc/app/process_adc.h \
- ../Core/Inc/app/calibration.h ../Core/Inc/config/vcu_config.h \
- ../Core/Inc/can.h ../Core/Inc/main.h ../Core/Inc/adc.h ../Core/Inc/tim.h \
- ../Core/Inc/cmt_utils.h
+ ../Core/Inc/config/vehicle_data_structs.h ../Core/Inc/app/process_adc.h \
+ ../Core/Inc/app/calibration.h ../Core/Inc/app/handle_gui.h \
+ ../Core/Inc/app/process_pedals_data.h ../Core/Inc/app/RTD.h \
+ ../Core/Inc/app/vehicle_control.h ../Core/Inc/config/amk_data_structs.h \
+ ../Core/Inc/app/log_vehicle_data.h \
+ ../Core/Inc/app/vehicle_fault_handler.h ../Core/Inc/drivers/can_driver.h \
+ ../Core/Inc/config/vcu_config.h ../Core/Inc/can.h ../Core/Inc/main.h \
+ ../Core/Inc/adc.h ../Core/Inc/tim.h ../Core/Inc/cmt_utils.h
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
@@ -93,14 +96,21 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
-../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_usart.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 ../Core/Inc/app/state_control.h:
 ../Core/Inc/config/vehicle_data_structs.h:
-../Core/Inc/drivers/can_driver.h:
 ../Core/Inc/app/process_adc.h:
 ../Core/Inc/app/calibration.h:
+../Core/Inc/app/handle_gui.h:
+../Core/Inc/app/process_pedals_data.h:
+../Core/Inc/app/RTD.h:
+../Core/Inc/app/vehicle_control.h:
+../Core/Inc/config/amk_data_structs.h:
+../Core/Inc/app/log_vehicle_data.h:
+../Core/Inc/app/vehicle_fault_handler.h:
+../Core/Inc/drivers/can_driver.h:
 ../Core/Inc/config/vcu_config.h:
 ../Core/Inc/can.h:
 ../Core/Inc/main.h:
