@@ -1,3 +1,8 @@
-../Core/Src/app/log_vehicle_data.c:22:6:Task_LogVehicleData	2
-../Core/Src/app/log_vehicle_data.c:53:7:calcBrakePressure	3
-../Core/Src/app/log_vehicle_data.c:73:7:calcBspdCurrentSensorCurrent	1
+../Core/Src/app/log_vehicle_data.c:25:6:Task_LogVehicleData	2
+../Core/Src/app/log_vehicle_data.c:100:6:CAN_2_Transmit_Timer_1_Callback	2
+../Core/Src/app/log_vehicle_data.c:143:6:CAN_2_Transmit_Timer_2_Callback	3
+../Core/Src/app/log_vehicle_data.c:196:7:Calc_Brake_Pressure	3
+../Core/Src/app/log_vehicle_data.c:208:7:Calc_BSPD_Sensor_Current	1
+../Core/Src/app/log_vehicle_data.c:222:7:Calc_Steering_Angle	3
+../Core/Src/app/log_vehicle_data.c:242:6:Convert_ADCs	1
+../Core/Src/app/log_vehicle_data.c:251:6:Get_Inverter_Data_To_Log	1

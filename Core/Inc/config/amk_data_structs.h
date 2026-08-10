@@ -17,10 +17,12 @@ typedef struct InverterData
 	uint16_t status;
 	int16_t actual_speed_value;
 	int16_t torque_current_raw;
+	float torque_current;
 	int16_t magnetizing_current_raw;
+	float magnetizing_current;
 	int16_t temp_motor;
 	int16_t temp_inverter;
-	uint32_t diagnostic_number;
+	uint16_t diagnostic_number;
 	int16_t temp_IGBT;
 
 } InverterData_t;

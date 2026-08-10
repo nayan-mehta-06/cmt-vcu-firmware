@@ -39,7 +39,7 @@ void Task_Process_ADC(void *argument)
 		sas_adc = Get_ADC_Channel(SAS_ADC_CHANNEL);
 		spare_adc = Get_ADC_Channel(SPARE_ADC_CHANNEL);
 
-		Clamp_ADC(&apps_1_adc);
+		//Clamp_ADC(&apps_1_adc);
 
 		pedals_adc_data.apps_1_adc = apps_1_adc;
 		pedals_adc_data.apps_2_adc = apps_2_adc;

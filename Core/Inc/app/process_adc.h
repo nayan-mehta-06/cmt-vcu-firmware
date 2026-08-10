@@ -30,6 +30,9 @@ typedef struct ADCsToLog
 
 } ADCsToLog_t;
 
+#define MIN_ADC_VAL 30
+#define MAX_ADC_VAL 3070
+
 void Task_Process_ADC(void *argument);
 
 void Clamp_ADC(uint16_t* adc_val);

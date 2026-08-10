@@ -13,11 +13,11 @@
 // All VCU States
 typedef enum
 {
-    STATE_IDLE,
-	STATE_CALIBRATION,
-	STATE_RTD,
-	STATE_SCREENSHOTED,
-	STATE_FAULTED
+    STATE_IDLE				= 0,
+	STATE_CALIBRATION		= 4,
+	STATE_RTD				= 1,
+	STATE_SCREENSHOTED		= 3,
+	STATE_FAULTED			= 2
 } SystemState_t;
 
 // All VCU State Transitions
@@ -38,5 +38,7 @@ extern SystemState_t system_state;
 extern QueueErrors_t* p_queue_errors;
 
 void Task_State_Ctrl(void *argument);
+
+SystemState_t Get_Current_State(void);
 
 #endif /* INC_APP_STATE_CONTROL_H_ */

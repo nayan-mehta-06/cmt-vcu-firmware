@@ -14,6 +14,7 @@
 #include "app/app_freertos.h"
 #include "drivers/can_driver.h"
 #include "config/can_ids.h"
+#include "config/vcu_config.h"
 
 
 void setInverterData1(InverterData_t *inv_data, uint8_t *data)
@@ -22,6 +23,9 @@ void setInverterData1(InverterData_t *inv_data, uint8_t *data)
 	inv_data->actual_speed_value 		= (int16_t)(data[2] | data[3] << 8);
 	inv_data->torque_current_raw 		= (int16_t)(data[4] | data[5] << 8);
 	inv_data->magnetizing_current_raw 	= (int16_t)(data[6] | data[7] << 8);
+
+    inv_data->torque_current = ((float)inv_data->torque_current_raw * ID110) / 16384.0f;
+    inv_data->magnetizing_current = ((float)inv_data->magnetizing_current_raw * ID110) / 16384.0f;
 }
 
 void processInverterStatus(InverterStatus_t *inv_status, uint16_t status)
@@ -70,7 +74,7 @@ bool transmit_inverter_command(InverterSetpoints_t *p_inverter_setpoints, uint8_
 
     //osMutexRelease(InverterData1_MutexHandle);
 
-	if ( CAN_transmit(txData, 8, can_address, CAN_1, CAN_STD_ID_FORMAT) )
+	if ( CAN_transmit(txData, EIGHT_BYTES, can_address, CAN_1, CAN_STD_ID_FORMAT) )
 	{
 		torque_command_transmission_sucessful = true;
 	}

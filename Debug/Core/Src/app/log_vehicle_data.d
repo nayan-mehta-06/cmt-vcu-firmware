@@ -2,6 +2,7 @@ Core/Src/app/log_vehicle_data.o: ../Core/Src/app/log_vehicle_data.c \
  ../Core/Inc/app/log_vehicle_data.h \
  ../Core/Inc/config/vehicle_data_structs.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ ../Core/Inc/config/amk_data_structs.h ../Core/Inc/app/process_adc.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
@@ -46,12 +47,14 @@ Core/Src/app/log_vehicle_data.o: ../Core/Src/app/log_vehicle_data.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/app/process_adc.h ../Core/Inc/config/amk_data_structs.h \
  ../Core/Inc/config/vcu_config.h ../Core/Inc/cmt_utils.h \
- ../Core/Inc/app/app_freertos.h
+ ../Core/Inc/app/app_freertos.h ../Core/Inc/app/state_control.h \
+ ../Core/Inc/drivers/can_driver.h ../Core/Inc/config/can_ids.h
 ../Core/Inc/app/log_vehicle_data.h:
 ../Core/Inc/config/vehicle_data_structs.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+../Core/Inc/config/amk_data_structs.h:
+../Core/Inc/app/process_adc.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -97,8 +100,9 @@ Core/Src/app/log_vehicle_data.o: ../Core/Src/app/log_vehicle_data.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
-../Core/Inc/app/process_adc.h:
-../Core/Inc/config/amk_data_structs.h:
 ../Core/Inc/config/vcu_config.h:
 ../Core/Inc/cmt_utils.h:
 ../Core/Inc/app/app_freertos.h:
+../Core/Inc/app/state_control.h:
+../Core/Inc/drivers/can_driver.h:
+../Core/Inc/config/can_ids.h:

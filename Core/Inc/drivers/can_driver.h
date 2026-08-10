@@ -28,6 +28,15 @@ void CAN_2_Error_Handler();
 #define CAN_STD_ID_FORMAT 0
 #define CAN_EXT_ID_FORMAT 1
 
+#define ONE_BYTE 1
+#define TWO_BYTES 2
+#define THREE_BYTES 3
+#define FOUR_BYTES 4
+#define FIVE_BYTES 5
+#define SIX_BYTES 6
+#define SEVEN_BYTES 7
+#define EIGHT_BYTES 8
+
 typedef struct
 {
 

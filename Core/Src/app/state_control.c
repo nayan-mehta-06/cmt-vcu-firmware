@@ -96,3 +96,14 @@ void Task_State_Ctrl(void *argument)
   }
   /* USER CODE END start_task */
 }
+
+SystemState_t Get_Current_State(void)
+{
+	SystemState_t current_state;
+
+	osMutexAcquire(SystemState_MutexHandle, osWaitForever);
+		current_state = system_state;
+	osMutexRelease(SystemState_MutexHandle);
+
+	return current_state;
+}

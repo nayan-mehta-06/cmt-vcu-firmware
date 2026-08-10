@@ -141,4 +141,6 @@ extern PedalsFaults_t* p_pedals_faults;
 void initialise_freertos_task_stack_usage(FreertosTaskStackUsage_t* p_freertos_task_stack_usage);
 extern FreertosTaskStackUsage_t* p_freertos_task_stack_usage;
 
+extern PedalsState_t* p_pedals_state_data;
+
 #endif /* INC_CONFIG_VEHICLE_DATA_STRUCTS_H_ */

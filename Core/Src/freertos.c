@@ -204,6 +204,21 @@ osTimerId_t APPS_2_OutOfRange_TimerHandle;
 const osTimerAttr_t APPS_2_OutOfRange_Timer_attributes = {
   .name = "APPS_2_OutOfRange_Timer"
 };
+/* Definitions for Screenshot_Timer */
+osTimerId_t Screenshot_TimerHandle;
+const osTimerAttr_t Screenshot_Timer_attributes = {
+  .name = "Screenshot_Timer"
+};
+/* Definitions for CAN_2_Transmit_Timer_1 */
+osTimerId_t CAN_2_Transmit_Timer_1Handle;
+const osTimerAttr_t CAN_2_Transmit_Timer_1_attributes = {
+  .name = "CAN_2_Transmit_Timer_1"
+};
+/* Definitions for CAN_2_Transmit_Timer_2 */
+osTimerId_t CAN_2_Transmit_Timer_2Handle;
+const osTimerAttr_t CAN_2_Transmit_Timer_2_attributes = {
+  .name = "CAN_2_Transmit_Timer_2"
+};
 /* Definitions for CAN1_Mutex */
 osMutexId_t CAN1_MutexHandle;
 const osMutexAttr_t CAN1_Mutex_attributes = {
@@ -244,6 +259,11 @@ osMutexId_t PedalsFaults_MutexHandle;
 const osMutexAttr_t PedalsFaults_Mutex_attributes = {
   .name = "PedalsFaults_Mutex"
 };
+/* Definitions for DataToLog_Mutex */
+osMutexId_t DataToLog_MutexHandle;
+const osMutexAttr_t DataToLog_Mutex_attributes = {
+  .name = "DataToLog_Mutex"
+};
 /* Definitions for CalibrationDataReceived_Event */
 osEventFlagsId_t CalibrationDataReceived_EventHandle;
 const osEventFlagsAttr_t CalibrationDataReceived_Event_attributes = {
@@ -253,6 +273,16 @@ const osEventFlagsAttr_t CalibrationDataReceived_Event_attributes = {
 osEventFlagsId_t PedalsOutOfRangeFault_EventHandle;
 const osEventFlagsAttr_t PedalsOutOfRangeFault_Event_attributes = {
   .name = "PedalsOutOfRangeFault_Event"
+};
+/* Definitions for APPS_Implausibility_Event */
+osEventFlagsId_t APPS_Implausibility_EventHandle;
+const osEventFlagsAttr_t APPS_Implausibility_Event_attributes = {
+  .name = "APPS_Implausibility_Event"
+};
+/* Definitions for Screenshot_Event */
+osEventFlagsId_t Screenshot_EventHandle;
+const osEventFlagsAttr_t Screenshot_Event_attributes = {
+  .name = "Screenshot_Event"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -278,6 +308,9 @@ extern void APPS_1_OutOfRange_Timer_Callback(void *argument);
 extern void BSE_OutOfRange_Timer_Callback(void *argument);
 extern void APPS_Implausibility_Timer_Callback(void *argument);
 extern void APPS_2_OutOfRange_Timer_Callback(void *argument);
+extern void Screenshot_Timer_Callback(void *argument);
+extern void CAN_2_Transmit_Timer_1_Callback(void *argument);
+extern void CAN_2_Transmit_Timer_2_Callback(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -327,6 +360,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of PedalsFaults_Mutex */
   PedalsFaults_MutexHandle = osMutexNew(&PedalsFaults_Mutex_attributes);
 
+  /* creation of DataToLog_Mutex */
+  DataToLog_MutexHandle = osMutexNew(&DataToLog_Mutex_attributes);
+
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
@@ -356,6 +392,15 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of APPS_2_OutOfRange_Timer */
   APPS_2_OutOfRange_TimerHandle = osTimerNew(APPS_2_OutOfRange_Timer_Callback, osTimerOnce, NULL, &APPS_2_OutOfRange_Timer_attributes);
+
+  /* creation of Screenshot_Timer */
+  Screenshot_TimerHandle = osTimerNew(Screenshot_Timer_Callback, osTimerOnce, NULL, &Screenshot_Timer_attributes);
+
+  /* creation of CAN_2_Transmit_Timer_1 */
+  CAN_2_Transmit_Timer_1Handle = osTimerNew(CAN_2_Transmit_Timer_1_Callback, osTimerPeriodic, NULL, &CAN_2_Transmit_Timer_1_attributes);
+
+  /* creation of CAN_2_Transmit_Timer_2 */
+  CAN_2_Transmit_Timer_2Handle = osTimerNew(CAN_2_Transmit_Timer_2_Callback, osTimerPeriodic, NULL, &CAN_2_Transmit_Timer_2_attributes);
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
@@ -424,6 +469,12 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of PedalsOutOfRangeFault_Event */
   PedalsOutOfRangeFault_EventHandle = osEventFlagsNew(&PedalsOutOfRangeFault_Event_attributes);
+
+  /* creation of APPS_Implausibility_Event */
+  APPS_Implausibility_EventHandle = osEventFlagsNew(&APPS_Implausibility_Event_attributes);
+
+  /* creation of Screenshot_Event */
+  Screenshot_EventHandle = osEventFlagsNew(&Screenshot_Event_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */

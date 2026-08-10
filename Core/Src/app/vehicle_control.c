@@ -90,9 +90,11 @@ void InverterCAN_Transmit_Callback(void *argument)
 {
 
 	osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
+	osMutexAcquire(CAN1_MutexHandle, osWaitForever);
 
 		transmit_inverter_command(p_inverter_setpoints_1, INVERTER_1_NODE_ADDRESS);
 
+	osMutexRelease(CAN1_MutexHandle);
 	osMutexRelease(InverterData1_MutexHandle);
 
 }

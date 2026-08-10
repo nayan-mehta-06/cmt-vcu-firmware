@@ -48,7 +48,8 @@ Core/Src/app/process_pedals_data.o: ../Core/Src/app/process_pedals_data.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Core/Inc/app/app_freertos.h ../Core/Inc/app/process_adc.h \
  ../Core/Inc/config/vcu_config.h ../Core/Inc/app/state_control.h \
- ../Core/Inc/drivers/CMT_M95512.h ../Core/Inc/spi.h ../Core/Inc/main.h
+ ../Core/Inc/app/calibration.h ../Core/Inc/drivers/CMT_M95512.h \
+ ../Core/Inc/spi.h ../Core/Inc/main.h ../Core/Inc/cmt_utils.h
 ../Core/Inc/app/process_pedals_data.h:
 ../Core/Inc/config/vehicle_data_structs.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
@@ -101,6 +102,8 @@ Core/Src/app/process_pedals_data.o: ../Core/Src/app/process_pedals_data.c \
 ../Core/Inc/app/process_adc.h:
 ../Core/Inc/config/vcu_config.h:
 ../Core/Inc/app/state_control.h:
+../Core/Inc/app/calibration.h:
 ../Core/Inc/drivers/CMT_M95512.h:
 ../Core/Inc/spi.h:
 ../Core/Inc/main.h:
+../Core/Inc/cmt_utils.h:

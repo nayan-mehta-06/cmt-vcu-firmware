@@ -22,42 +22,44 @@
 void Task_VehicleFaultHandler(void *argument)
 {
 	uint32_t pedals_faults_flags;
+	uint32_t apps_implausibility_flags;
+	uint32_t screenshot_flag;
 
 	SystemEvent_t system_event;
 	SystemState_t current_state;
 
 	for (;;)
 	{
-		osMutexAcquire(SystemState_MutexHandle, osWaitForever);
-			current_state = system_state;
-		osMutexRelease(SystemState_MutexHandle);
+		current_state = Get_Current_State();
 
 		pedals_faults_flags = osEventFlagsGet(PedalsOutOfRangeFault_EventHandle);
+		apps_implausibility_flags = osEventFlagsGet(APPS_Implausibility_EventHandle);
+		screenshot_flag = osEventFlagsGet(Screenshot_EventHandle);
 
 		if (current_state == STATE_FAULTED)
 		{
-			if (pedals_faults_flags == NO_ERRORS)
-			{
-				osMutexAcquire(SystemState_MutexHandle, osWaitForever);
+			INVERTER_DISABLE();
 
-				while (system_state != STATE_FAULTED)
+			if (pedals_faults_flags == NO_ERRORS
+				&& apps_implausibility_flags == NO_ERRORS)
+			{
+				while (current_state != STATE_FAULTED)
 				{
 					system_event = EVENT_CLEAR_FAULT;
 				    if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
 				    {
 					    p_queue_errors_data->state_transition_errors++;
 				    }
-				}
 
-				osMutexRelease(SystemState_MutexHandle);
+				    current_state = Get_Current_State();
+				}
 			}
 		}
 		else
 		{
-			if (pedals_faults_flags != NO_ERRORS)
+			if (pedals_faults_flags != NO_ERRORS
+				|| apps_implausibility_flags != NO_ERRORS)
 			{
-				osMutexAcquire(SystemState_MutexHandle, osWaitForever);
-
 				while (system_state != STATE_FAULTED)
 				{
 					system_event = EVENT_FAULT;
@@ -65,13 +67,44 @@ void Task_VehicleFaultHandler(void *argument)
 				    {
 					    p_queue_errors_data->state_transition_errors++;
 				    }
-				}
 
-				osMutexRelease(SystemState_MutexHandle);
+				    current_state = Get_Current_State();
+				}
 			}
 		}
 
+		if (current_state == STATE_SCREENSHOTED)
+		{
+			if (screenshot_flag == NO_ERRORS)
+			{
+				while (current_state != STATE_RTD)
+				{
+					system_event = EVENT_SCREENSHOT_OVER;
+				    if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
+				    {
+					    p_queue_errors_data->state_transition_errors++;
+				    }
 
+				    current_state = Get_Current_State();
+				}
+			}
+		}
+		else if (current_state == STATE_RTD)
+		{
+			if (screenshot_flag != NO_ERRORS)
+			{
+				while (system_state != STATE_SCREENSHOTED)
+				{
+					system_event = EVENT_SCREENSHOT;
+				    if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
+				    {
+					    p_queue_errors_data->state_transition_errors++;
+				    }
+
+				    current_state = Get_Current_State();
+				}
+			}
+		}
 
 		osDelay(1);
 	}

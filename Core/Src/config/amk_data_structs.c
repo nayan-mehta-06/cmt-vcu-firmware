@@ -14,7 +14,9 @@ void initialise_inverter_data(InverterData_t* p_inverter_data)
     p_inverter_data->status = 0;
     p_inverter_data->actual_speed_value = 0;
     p_inverter_data->torque_current_raw = 0;
+    p_inverter_data->torque_current = 0;
     p_inverter_data->magnetizing_current_raw = 0;
+    p_inverter_data->magnetizing_current = 0;
     p_inverter_data->temp_motor = 0;
     p_inverter_data->temp_inverter = 0;
     p_inverter_data->diagnostic_number = 0;

@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <config/vehicle_data_structs.h>
 #include <config/amk_data_structs.h>
+#include "app/log_vehicle_data.h"
 
 /* USER CODE END Includes */
 
@@ -77,6 +78,9 @@ TestingVCU_t* p_testing_vcu_data = &testing_vcu_data;
 
 FreertosTaskStackUsage_t freertos_task_stack_usage;
 FreertosTaskStackUsage_t* p_freertos_task_stack_usage = &freertos_task_stack_usage;
+
+DataToLog_t data_to_log;
+DataToLog_t* p_data_to_log = &data_to_log;
 
 // CAN definitions
 CAN_TxHeaderTypeDef TxHeader;

@@ -10,6 +10,8 @@
 
 #include <config/vehicle_data_structs.h>
 
+#define NO_ERRORS 0
+
 void Task_VehicleFaultHandler(void *argument);
 
 #endif /* INC_APP_LOG_VEHICLE_DATA_H_ */

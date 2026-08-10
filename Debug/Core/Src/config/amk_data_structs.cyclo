@@ -1,3 +1,3 @@
 ../Core/Src/config/amk_data_structs.c:12:6:initialise_inverter_data	1
-../Core/Src/config/amk_data_structs.c:24:6:initialise_inverter_status	1
-../Core/Src/config/amk_data_structs.c:36:6:initialise_inverter_setpoints	1
+../Core/Src/config/amk_data_structs.c:26:6:initialise_inverter_status	1
+../Core/Src/config/amk_data_structs.c:38:6:initialise_inverter_setpoints	1

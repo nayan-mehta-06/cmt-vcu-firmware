@@ -5,8 +5,8 @@
  *      Author: mehta
  */
 
-
-#include <app/process_pedals_data.h>
+#include <stdlib.h>
+#include "app/process_pedals_data.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
@@ -17,7 +17,9 @@
 #include "app/process_adc.h"
 #include "config/vcu_config.h"
 #include "app/state_control.h"
+#include "app/calibration.h"
 #include "drivers/CMT_M95512.h"
+#include "cmt_utils.h"
 
 void Task_Process_Pedals_Data(void *argument)
 {
@@ -36,7 +38,9 @@ void Task_Process_Pedals_Data(void *argument)
 
 	bool apps_1_fault_timer_started = false,
 		 apps_2_fault_timer_started = false,
-		 bse_fault_timer_started = false;
+		 bse_fault_timer_started = false,
+		 apps_implausibility_timer_started = false,
+		 screenshot_timer_started = false;
 
 	PedalsFaults_t previous_pedals_faults;
 	PedalsFaults_t current_pedals_faults;
@@ -95,12 +99,14 @@ void Task_Process_Pedals_Data(void *argument)
 			  && !apps_1_fault_timer_started)
 		  {
 			  osTimerStart(APPS_1_OutOfRange_TimerHandle, PEDALS_FAULT_TIMEOUT_MILLISECONDS);
+			  apps_1_fault_timer_started = true;
 		  }
 		  else if (current_pedals_faults.apps_1_status == NORMAL
 			  && previous_pedals_faults.apps_1_status == NORMAL
 			  && apps_1_fault_timer_started)
 		  {
 			  osTimerStop(APPS_1_OutOfRange_TimerHandle);
+			  apps_1_fault_timer_started = false;
 		  }
 		  else if (current_pedals_faults.apps_1_status == NORMAL
 			  && !(previous_pedals_faults.apps_1_status == NORMAL))
@@ -116,12 +122,14 @@ void Task_Process_Pedals_Data(void *argument)
 			  && !apps_2_fault_timer_started)
 		  {
 			  osTimerStart(APPS_2_OutOfRange_TimerHandle, PEDALS_FAULT_TIMEOUT_MILLISECONDS);
+			  apps_2_fault_timer_started = true;
 		  }
 		  else if (current_pedals_faults.apps_2_status == NORMAL
 			  && previous_pedals_faults.apps_2_status == NORMAL
 			  && apps_2_fault_timer_started)
 		  {
 			  osTimerStop(APPS_2_OutOfRange_TimerHandle);
+			  apps_2_fault_timer_started = false;
 		  }
 		  else if (current_pedals_faults.apps_2_status == NORMAL
 			  && !(previous_pedals_faults.apps_2_status == NORMAL))
@@ -137,12 +145,14 @@ void Task_Process_Pedals_Data(void *argument)
 			  && !bse_fault_timer_started)
 		  {
 			  osTimerStart(BSE_OutOfRange_TimerHandle, PEDALS_FAULT_TIMEOUT_MILLISECONDS);
+			  bse_fault_timer_started = true;
 		  }
 		  else if (current_pedals_faults.bse_status == NORMAL
 			  && previous_pedals_faults.bse_status == NORMAL
 			  && bse_fault_timer_started)
 		  {
 			  osTimerStop(BSE_OutOfRange_TimerHandle);
+			  bse_fault_timer_started = false;
 		  }
 		  else if (current_pedals_faults.bse_status == NORMAL
 			  && !(previous_pedals_faults.bse_status == NORMAL))
@@ -153,19 +163,72 @@ void Task_Process_Pedals_Data(void *argument)
 			);
 		  }
 
-
 		  apps_1_percentage = calc_adc_percentage(pedals_adc_data.apps_1_adc, apps_1_min, apps_1_max);
 		  apps_2_percentage = calc_adc_percentage(pedals_adc_data.apps_2_adc, apps_2_min, apps_2_max);
 		  accel_pedal_percentage = (apps_1_percentage + apps_2_percentage) / 2;
 
 		  brake_pedal_percentage = calc_adc_percentage(pedals_adc_data.bse_adc, bse_min, bse_max);
 
+		  current_pedals_faults.apps_implausibility = APPS_Implausibility_Check(apps_1_percentage,
+				  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	apps_2_percentage);
+
+		  if (current_pedals_faults.apps_implausibility == TRUE
+			  && previous_pedals_faults.apps_implausibility == FALSE
+			  && !apps_implausibility_timer_started)
+		  {
+			  osTimerStart(APPS_Implausibility_TimerHandle, PEDALS_FAULT_TIMEOUT_MILLISECONDS);
+			  apps_implausibility_timer_started = true;
+		  }
+		  else if (current_pedals_faults.apps_implausibility == FALSE
+			  && previous_pedals_faults.apps_implausibility == FALSE
+			  && apps_implausibility_timer_started)
+		  {
+			  osTimerStop(APPS_Implausibility_TimerHandle);
+			  apps_implausibility_timer_started = false;
+		  }
+		  else if (current_pedals_faults.apps_implausibility == FALSE
+			  && !(previous_pedals_faults.apps_implausibility == TRUE))
+		  {
+			osEventFlagsClear(
+				APPS_Implausibility_EventHandle,
+				APPS_IMPLAUSIBILITY
+			);
+		  }
+
+		  current_pedals_faults.screenshot = Screenshot_Check(apps_1_percentage, apps_2_percentage,
+				  	  	  	  	  	  	  	  	  	  	  	   brake_pedal_percentage,
+															   BRAKES_ENGAGED_THRESHOLD_PERCENTAGE,
+															   current_pedals_faults.screenshot);
+
+		  if (current_pedals_faults.screenshot == TRUE
+			  && previous_pedals_faults.screenshot == FALSE
+			  && !screenshot_timer_started)
+		  {
+			  osTimerStart(Screenshot_TimerHandle, PEDALS_FAULT_TIMEOUT_MILLISECONDS);
+			  screenshot_timer_started = true;
+		  }
+		  else if (current_pedals_faults.screenshot == FALSE
+			  && previous_pedals_faults.screenshot == FALSE
+			  && screenshot_timer_started)
+		  {
+			  osTimerStop(Screenshot_TimerHandle);
+			  screenshot_timer_started = false;
+		  }
+		  else if (current_pedals_faults.screenshot == FALSE
+			  && !(previous_pedals_faults.screenshot == TRUE))
+		  {
+			osEventFlagsClear(
+				Screenshot_EventHandle,
+				SCREENSHOT
+			);
+		  }
+
 		  osMutexAcquire(PedalsState_MutexHandle, osWaitForever);
 
-		  p_pedals_state_data->apps_1_percentage = apps_1_percentage;
-		  p_pedals_state_data->apps_2_percentage = apps_2_percentage;
-		  p_pedals_state_data->accel_pedal_percentage = accel_pedal_percentage;
-		  p_pedals_state_data->brake_pedal_percentage = brake_pedal_percentage;
+			  p_pedals_state_data->apps_1_percentage = apps_1_percentage;
+			  p_pedals_state_data->apps_2_percentage = apps_2_percentage;
+			  p_pedals_state_data->accel_pedal_percentage = accel_pedal_percentage;
+			  p_pedals_state_data->brake_pedal_percentage = brake_pedal_percentage;
 
 		  osMutexRelease(PedalsState_MutexHandle);
 
@@ -231,7 +294,18 @@ void BSE_OutOfRange_Timer_Callback(void *argument)
 
 void APPS_Implausibility_Timer_Callback(void *argument)
 {
+    osEventFlagsSet(
+		APPS_Implausibility_EventHandle,
+		APPS_IMPLAUSIBILITY
+    );
+}
 
+void Screenshot_Timer_Callback(void *argument)
+{
+    osEventFlagsSet(
+		Screenshot_EventHandle,
+		SCREENSHOT
+    );
 }
 
 uint8_t calc_adc_percentage(uint16_t val, uint16_t min, uint16_t max)
@@ -245,6 +319,7 @@ uint8_t calc_adc_percentage(uint16_t val, uint16_t min, uint16_t max)
 				(max - min)
 			);
 }
+
 
 // Check if APPS / BSE sensor values are outside expected working range
 PedalStatus_t pedal_position_sensor_out_of_range_fault_check(uint16_t pedal_position_sensor_raw_value,
@@ -267,6 +342,57 @@ PedalStatus_t pedal_position_sensor_out_of_range_fault_check(uint16_t pedal_posi
 
 	return pedal_position_sensor_out_of_range_fault_status;
 }
+
+
+bool APPS_Implausibility_Check(uint8_t APPS_1_percentage, uint8_t APPS_2_percentage)
+{
+	bool APPS_implausibility_fault = false;
+
+	// Define fault threshold at 10% as per Rules
+	uint8_t APPS_pedal_travel_deviation_fault_threshold = 10;
+
+	// Calculate pedal travel deviation
+	int APPS_pedal_travel_deviation = abs(APPS_1_percentage - APPS_2_percentage);
+	if(APPS_pedal_travel_deviation > APPS_pedal_travel_deviation_fault_threshold)
+	{
+		APPS_implausibility_fault = true;
+	}
+
+	return APPS_implausibility_fault;
+}
+
+
+// Check for brake implausbility
+// Occurs if the brakes are engaged and more than 25% accelerator pedal travel is detected simultaneously
+bool Screenshot_Check(uint8_t APPS_1_percentage, uint8_t APPS_2_percentage,
+					  uint8_t brake_pedal_position_percentage,
+					  uint8_t brakes_engaged_threshold_percentage,
+					  bool current_screenshot_status)
+{
+	// Set APPS pedal travel fault threshold to 25%
+	uint8_t APPS_pedal_travel_fault_threshold_percentage = 25;
+
+	// Set APPS pedal travel fault reset threshold to 5%
+	uint8_t APPS_pedal_travel_fault_reset_threshold_percentage = 5;
+
+	if((current_screenshot_status == false)
+		&& (brake_pedal_position_percentage > brakes_engaged_threshold_percentage)
+		&& (APPS_1_percentage > APPS_pedal_travel_fault_threshold_percentage)
+		&& (APPS_2_percentage > APPS_pedal_travel_fault_threshold_percentage))
+	{
+		current_screenshot_status = true;
+	}
+
+	else if((current_screenshot_status == true)
+			  && (APPS_1_percentage <= APPS_pedal_travel_fault_reset_threshold_percentage)
+			  && (APPS_2_percentage <= APPS_pedal_travel_fault_reset_threshold_percentage))
+	{
+		current_screenshot_status = false;
+	}
+
+	return current_screenshot_status;
+}
+
 
 void Get_Previous_Pedals_Faults_Data(PedalsFaults_t* p_previous_faults)
 {

@@ -23,6 +23,12 @@
 #define BSE_OPEN_CIRCUIT_FAULT_THRESHOLD 4000
 #define BSE_SHORT_CIRCUIT_FAULT_THRESHOLD 100
 
+#define APPS_1_OUT_OF_RANGE (1U << 0)
+#define APPS_2_OUT_OF_RANGE (1U << 1)
+#define BSE_OUT_OF_RANGE (1U << 2)
+#define APPS_IMPLAUSIBILITY (1U << 0)
+#define SCREENSHOT (1U << 0)
+
 extern PedalsState_t* p_pedals_state_data;
 extern PedalsFaults_t* p_pedals_faults_data;
 
@@ -33,7 +39,15 @@ void BSE_OutOfRange_Timer_Callback(void *argument);
 void APPS_Implausibility_Timer_Callback(void *argument);
 
 uint8_t calc_adc_percentage(uint16_t val, uint16_t min, uint16_t max);
-PedalStatus_t pedal_position_sensor_out_of_range_fault_check(uint16_t pedal_position_sensor_raw_value, uint16_t pedal_position_sensor_open_circuit_threshold, uint16_t pedal_position_sensor_short_circuit_threshold);
+PedalStatus_t pedal_position_sensor_out_of_range_fault_check(uint16_t pedal_position_sensor_raw_value,
+															uint16_t pedal_position_sensor_open_circuit_threshold,
+															uint16_t pedal_position_sensor_short_circuit_threshold);
+bool APPS_Implausibility_Check(uint8_t APPS_1_percentage, uint8_t APPS_2_percentage);
+bool Screenshot_Check(uint8_t APPS_1_percentage, uint8_t APPS_2_percentage,
+					  uint8_t brake_pedal_position_percentage,
+					  uint8_t brakes_engaged_threshold_percentage,
+					  bool brake_pedal_implausibility_fault);
+
 void Get_Previous_Pedals_Faults_Data(PedalsFaults_t* p_previous_faults);
 void Set_New_Pedals_Faults_Data(PedalsFaults_t* p_new_faults);
 

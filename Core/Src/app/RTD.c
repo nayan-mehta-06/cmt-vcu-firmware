@@ -143,7 +143,6 @@ void Task_RTD(void *argument)
 		  if (p_vehicle_state_data -> precharge_complete)
 		  {
 			  p_inverter_setpoints_1 -> control |= (1 << AMK_CONTROL_DC_ON);
-			  INVERTER_ENABLE();
 		  }
 		  else
 		  {
@@ -181,19 +180,27 @@ void Task_RTD(void *argument)
 			  !p_vehicle_state_data->inverter_enabled &&
 			  system_state == STATE_IDLE)
 		  {
-			  RTD_BUTTON_LIGHT_ON();
-			  if (rtd_button_pressed)
-			  {
-				  RTD_BUZZER_ON();
-				  osTimerStart(RTD_Button_TimerHandle, RTD_BUTTON_PRESS_MILLISECONDS);
-				  system_event = EVENT_ENTER_RTD;
-				  if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
+			  if(p_vehicle_state_data->brakes_engaged == true) {
+				  RTD_BUTTON_LIGHT_ON();
+				  if (rtd_button_pressed)
 				  {
-					  p_queue_errors_data->state_transition_errors++;
-				  }
+					  RTD_BUZZER_ON();
+					  osTimerStart(RTD_Button_TimerHandle, RTD_BUTTON_PRESS_MILLISECONDS);
+					  osTimerStart(RTD_Buzzer_TimerHandle, RTD_BUZZER_TIME_MILLISECONDS);
+					  system_event = EVENT_ENTER_RTD;
+					  if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
+					  {
+						  p_queue_errors_data->state_transition_errors++;
+					  }
 
-				  p_vehicle_state_data->inverter_enabled = true;
+					  p_vehicle_state_data->inverter_enabled = true;
+				  }
 			  }
+			  else
+			  {
+				  RTD_BUTTON_LIGHT_OFF();
+			  }
+
 		  }
 		  else if (p_vehicle_state_data->inverter_enabled &&
 				   system_state == STATE_RTD)
@@ -210,9 +217,6 @@ void Task_RTD(void *argument)
 				  }
 
 				  p_vehicle_state_data->inverter_enabled = false;
-
-				  RTD_BUZZER_ON();
-				  osTimerStart(RTD_Buzzer_TimerHandle, RTD_BUZZER_TIME_MILLISECONDS);
 			  }
 		  }
 
