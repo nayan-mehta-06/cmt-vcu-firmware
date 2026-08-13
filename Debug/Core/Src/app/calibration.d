@@ -49,7 +49,8 @@ Core/Src/app/calibration.o: ../Core/Src/app/calibration.c \
  ../Core/Inc/config/vehicle_data_structs.h ../Core/Inc/app/process_adc.h \
  ../Core/Inc/config/vcu_config.h ../Core/Inc/cmt_utils.h \
  ../Core/Inc/drivers/cmt_M95512.h ../Core/Inc/spi.h ../Core/Inc/main.h \
- ../Core/Inc/app/app_freertos.h ../Core/Inc/app/state_control.h
+ ../Core/Inc/app/app_freertos.h ../Core/Inc/app/state_control.h \
+ ../Core/Inc/drivers/adc_driver.h
 ../Core/Inc/app/calibration.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
@@ -107,3 +108,4 @@ Core/Src/app/calibration.o: ../Core/Src/app/calibration.c \
 ../Core/Inc/main.h:
 ../Core/Inc/app/app_freertos.h:
 ../Core/Inc/app/state_control.h:
+../Core/Inc/drivers/adc_driver.h:

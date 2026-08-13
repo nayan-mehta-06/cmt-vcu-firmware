@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+// Struct to hold the data sent by the inverters
 typedef struct InverterData
 {
 
@@ -27,6 +28,10 @@ typedef struct InverterData
 
 } InverterData_t;
 
+/*
+ * Struct to show the human-readable version of the uint16_t status
+ * variable from the InverterData_t struct
+ * */
 typedef struct InverterStatus
 {
 
@@ -41,6 +46,9 @@ typedef struct InverterStatus
 
 } InverterStatus_t;
 
+/*
+ * Struct to hold the data sent from VCU to the inverters
+ * */
 typedef struct InverterSetpoints
 {
 

@@ -10,7 +10,7 @@
 
 #include <config/vehicle_data_structs.h>
 
-// All VCU States
+// All VCU States with defined integer values to be logged to CAN
 typedef enum
 {
     STATE_IDLE				= 0,
@@ -23,6 +23,7 @@ typedef enum
 // All VCU State Transitions
 typedef enum
 {
+	EVENT_NONE,
 	EVENT_ENTER_CALIBRATION,
 	EVENT_CALIBRATION_COMPLETE,
 	EVENT_ENTER_RTD,

@@ -19,7 +19,6 @@
 #include "config/vcu_config.h"
 #include "app/inverter_control.h"
 
-
 void Task_Vehicle_Ctrl(void *argument)
 {
 	uint8_t accel_pedal_percentage;
@@ -29,6 +28,7 @@ void Task_Vehicle_Ctrl(void *argument)
 
 	bool brakes_engaged;
 
+	// Start the periodic timer to transmit messages to the inverters over CAN1
 	osTimerStart(InverterCAN_Transmit_TimerHandle, INVERTER_TORQUE_COMMAND_CAN_TRANSMIT_RATE);
 
   /* Infinite loop */
@@ -62,10 +62,17 @@ void Task_Vehicle_Ctrl(void *argument)
 
 	  osMutexRelease(VehicleState_MutexHandle);
 
-
-	  torque_setpoint = (int16_t)(accel_pedal_percentage * 1000.0f);
+	  // Inverter requires the torque setpoint to be in 0.1% units
+	  /* Torque is a function of how much the pedal is pressed, 100% pedal press
+	   * means you request 100% of the allowed torque
+	   */
+	  torque_setpoint = (int16_t)(accel_pedal_percentage * 10.0f);
 
 	  osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
+	  /*
+	   * By default, the inverter will be set no torque limits or setpoints as needed
+	   * by its start-up sequence and to ensure the car can't move randomly
+	   */
 		  if (current_state == STATE_RTD)
 		  {
 			  p_inverter_setpoints_1->torque_setpoint = torque_setpoint;
@@ -79,8 +86,6 @@ void Task_Vehicle_Ctrl(void *argument)
 			  p_inverter_setpoints_1->torque_limit_negative = 0;
 		  }
 	  osMutexRelease(InverterData1_MutexHandle);
-
-
 
     osDelay(1);
   }

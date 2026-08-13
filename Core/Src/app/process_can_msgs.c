@@ -27,6 +27,8 @@ void Task_Process_CAN_Msgs(void *argument)
 
 	for(;;)
 	{
+
+		/* Only process the message if it was successfully received from the queue */
 	  if (osMessageQueueGet(CanMsgQueueHandle, &msg, NULL, osWaitForever) == osOK)
 	  {
 		  if (msg.can_line == 1)

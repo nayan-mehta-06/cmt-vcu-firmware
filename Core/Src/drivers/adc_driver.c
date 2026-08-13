@@ -9,6 +9,8 @@
 
 #include "drivers/adc_driver.h"
 
+
+// Gets the requested ADC value from the raw_adc_values global variable
 uint16_t Get_ADC_Channel(uint8_t channel)
 {
     return raw_ADC_values[channel];

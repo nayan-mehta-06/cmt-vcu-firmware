@@ -40,15 +40,18 @@ void Task_LogVehicleData(void *argument)
 
 	uint8_t pc_complete_to_log;
 
+	/* Start the periodic timers to start the CAN2 transmissions  */
 	osTimerStart(CAN_2_Transmit_Timer_1Handle, CAN_2_TRANSMIT_RATE);
 	osTimerStart(CAN_2_Transmit_Timer_2Handle, CAN_2_TRANSMIT_RATE);
 
 	/* Infinite Loop */
 	for(;;)
 	{
-		  if (osMessageQueueGet(PedalsADCQueueHandle, &adcs_to_log, NULL, osWaitForever) != osOK)
+
+		/* Receive the sensor values that should be logged from the process adc task */
+		  if (osMessageQueueGet(ADCsToLogQueueHandle, &adcs_to_log, NULL, osWaitForever) != osOK)
 		  {
-			  p_queue_errors_data->logging_adc_errors++;
+			  //p_queue_errors_data->logging_adc_errors++;
 		  }
 
 		  Convert_ADCs(&converted_adcs_to_log, adcs_to_log);
@@ -65,10 +68,13 @@ void Task_LogVehicleData(void *argument)
 									   p_inverter_setpoints_2);
 		  osMutexRelease(InverterData2_MutexHandle);
 
+		  /* The event flags can be directly logged as all event bits fit into the 8 bits of the flag
+		   * so typecasting it to an 8bit unsigned integer wont lose any information  */
 		pedals_faults_flags_to_log = (uint8_t)(osEventFlagsGet(PedalsOutOfRangeFault_EventHandle) & 0xFF);
 		apps_implausibility_flags_to_log = (uint8_t)(osEventFlagsGet(APPS_Implausibility_EventHandle) & 0xFF);
 		screenshot_flag_to_log = (uint8_t)(osEventFlagsGet(Screenshot_EventHandle) & 0xFF);
 
+		/* Make copies of the global structs to log to prevent accessing them for very long */
 		osMutexAcquire(PedalsState_MutexHandle, osWaitForever);
 			pedals_state_to_log = *p_pedals_state_data;
 		osMutexRelease(PedalsState_MutexHandle);
@@ -81,6 +87,7 @@ void Task_LogVehicleData(void *argument)
 			pc_complete_to_log = p_vehicle_state_data->precharge_complete;
 		osMutexRelease(VehicleState_MutexHandle);
 
+		/* Save all logging values to global struct so that only one mutex is required by the timer callbacks */
 		osMutexAcquire(DataToLog_MutexHandle, osWaitForever);
 			p_data_to_log->converted_adcs             = converted_adcs_to_log;
 			p_data_to_log->inv_1_data                 = inv_1_data_to_log;
@@ -97,6 +104,8 @@ void Task_LogVehicleData(void *argument)
 	}
 }
 
+
+/* Log non-inverter values over can over 2 messages */
 void CAN_2_Transmit_Timer_1_Callback(void *argument)
 {
 	DataToLog_t all_data_to_log;
@@ -106,6 +115,7 @@ void CAN_2_Transmit_Timer_1_Callback(void *argument)
 		all_data_to_log = *p_data_to_log;
 	osMutexRelease(DataToLog_MutexHandle);
 
+	/* 16 bit integers are logged over 2 bytes in big endian format */
 	can_data[0] = (all_data_to_log.converted_adcs.BSPD_current_sensor_current >> 8) & 0xFF;
 	can_data[1] = (all_data_to_log.converted_adcs.BSPD_current_sensor_current & 0xFF);
 
@@ -127,7 +137,7 @@ void CAN_2_Transmit_Timer_1_Callback(void *argument)
 	can_data[4] = all_data_to_log.pedals_faults_flags;
 	can_data[5] = all_data_to_log.apps_implausibility_flags;
 	can_data[6] = all_data_to_log.screenshot_flag;
-	can_data[6] = all_data_to_log.pc_complete;
+	can_data[7] = all_data_to_log.pc_complete;
 
 	CAN_transmit(can_data, EIGHT_BYTES, CAN_2_VCU_DATA_2, CAN_2, CAN_STD_ID_FORMAT);
 
@@ -140,6 +150,7 @@ void CAN_2_Transmit_Timer_1_Callback(void *argument)
 
 }
 
+/* log inverter details over can over 2 messages */
 void CAN_2_Transmit_Timer_2_Callback(void *argument)
 {
 	DataToLog_t all_data_to_log;
@@ -154,6 +165,8 @@ void CAN_2_Transmit_Timer_2_Callback(void *argument)
 		all_data_to_log = *p_data_to_log;
 	osMutexRelease(DataToLog_MutexHandle);
 
+	/* Save each inverter struct into an array so they can be looped over instead of
+	 * duplicating the code */
 	inv_datas[0] = &all_data_to_log.inv_1_data;
 	inv_datas[1] = &all_data_to_log.inv_2_data;
 
@@ -193,9 +206,12 @@ void CAN_2_Transmit_Timer_2_Callback(void *argument)
 	}
 }
 
+
+/* Taken from 2025 Firmware, modified to make it more consistent with 26 firmware */
 float Calc_Brake_Pressure(uint16_t bpps_adc)
 {
-	float v_sensor = ((float)bpps_adc / ADC_MAX_READING) * ADC_SUPPLY_VOLTAGE * V_DIVIDER_GAIN;
+
+	float v_sensor = Calc_Sensor_Input_Voltage(bpps_adc);
 	if (v_sensor < BPPS_MIN_VOLTAGE) v_sensor = BPPS_MIN_VOLTAGE;
 	if (v_sensor > BPPS_MAX_VOLTAGE) v_sensor = BPPS_MAX_VOLTAGE;
 
@@ -205,19 +221,22 @@ float Calc_Brake_Pressure(uint16_t bpps_adc)
 	return (brake_pressure_front_PSI * PSI_TO_BAR_CONVERSION_FACTOR);
 }
 
+/* Adapted from the BSPD sensor datasheet */
+// https://www.lem.com/sites/default/files/products_datasheets/htfs-200__800-p-v13.pdf
 float Calc_BSPD_Sensor_Current(uint16_t bspd_cs_adc)
 {
 	float v_ref = 1.5f;
-	uint16_t nominal_current = 200;
+	uint16_t nominal_current = 200; // We use the HTFS-200, therefore nominal current is 200A
 	float multiplier = 1.25f;
 
-	float v_sensor = ((float)bspd_cs_adc / ADC_MAX_READING) * ADC_SUPPLY_VOLTAGE * V_DIVIDER_GAIN;
+	float v_sensor = Calc_Sensor_Input_Voltage(bspd_cs_adc);
 
 	float current = (v_sensor - v_ref) * (nominal_current / multiplier);
 
 	return current;
 }
 
+/* Adapted from the Steering angle sensor datasheet */
 // 981HE0B4WA https://www.vishay.com/docs/57103/model981he.pdf
 float Calc_Steering_Angle(uint16_t sas_cs_adc) {
 
@@ -226,7 +245,7 @@ float Calc_Steering_Angle(uint16_t sas_cs_adc) {
 	float sensor_max_percentage = 0.9f;
 	uint16_t sensor_electrical_angle = 360;
 
-	float v_sensor = ((float)sas_cs_adc / ADC_MAX_READING) * ADC_SUPPLY_VOLTAGE * V_DIVIDER_GAIN;
+	float v_sensor = Calc_Sensor_Input_Voltage(sas_cs_adc);
 
 	float v_percentage = v_sensor / sensor_supply_v;
 	float angle = (((v_percentage - sensor_min_percentage)
@@ -239,6 +258,20 @@ float Calc_Steering_Angle(uint16_t sas_cs_adc) {
 	return angle;
 }
 
+/*
+ * Convert the adc value back into the voltage coming into VCU as all the sensor
+ * equations use their voltage
+ */
+float Calc_Sensor_Input_Voltage(uint16_t adc_val)
+{
+	return ((float)adc_val / ADC_MAX_READING) * ADC_SUPPLY_VOLTAGE * V_DIVIDER_GAIN;
+}
+
+
+/*
+ * Scale calculated sensor values to fit them into 16 bits that can be sent over CAN
+ * as floats take up 4 bytes and are not efficient to send
+ */
 void Convert_ADCs(ConvertedADCs_t* converted_adcs, ADCsToLog_t raw_adcs)
 {
 	converted_adcs->brake_pressure_front_bar 		= (int16_t)(Calc_Brake_Pressure(raw_adcs.bpps_1_adc) * 10.0f);

@@ -1,4 +1,4 @@
-../Core/Src/drivers/can_driver.c:19:6:HAL_CAN_RxFifo0MsgPendingCallback	4
-../Core/Src/drivers/can_driver.c:67:6:CAN_transmit	15
-../Core/Src/drivers/can_driver.c:256:6:CAN_1_Error_Handler	4
-../Core/Src/drivers/can_driver.c:289:6:CAN_2_Error_Handler	4
+../Core/Src/drivers/can_driver.c:21:6:HAL_CAN_RxFifo0MsgPendingCallback	4
+../Core/Src/drivers/can_driver.c:70:6:CAN_transmit	15
+../Core/Src/drivers/can_driver.c:259:6:CAN_1_Error_Handler	4
+../Core/Src/drivers/can_driver.c:292:6:CAN_2_Error_Handler	4

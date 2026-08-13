@@ -78,70 +78,70 @@ const osThreadAttr_t LogTaskStackUsage_attributes = {
 osThreadId_t CalibrateTaskHandle;
 const osThreadAttr_t CalibrateTask_attributes = {
   .name = "CalibrateTask",
-  .stack_size = 256 * 4,
+  .stack_size = 192 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for RTD_Task */
 osThreadId_t RTD_TaskHandle;
 const osThreadAttr_t RTD_Task_attributes = {
   .name = "RTD_Task",
-  .stack_size = 256 * 4,
+  .stack_size = 192 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for ProcessADC_Task */
 osThreadId_t ProcessADC_TaskHandle;
 const osThreadAttr_t ProcessADC_Task_attributes = {
   .name = "ProcessADC_Task",
-  .stack_size = 256 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for PedalsDataTask */
 osThreadId_t PedalsDataTaskHandle;
 const osThreadAttr_t PedalsDataTask_attributes = {
   .name = "PedalsDataTask",
-  .stack_size = 256 * 4,
+  .stack_size = 192 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for VehicleCtrlTask */
 osThreadId_t VehicleCtrlTaskHandle;
 const osThreadAttr_t VehicleCtrlTask_attributes = {
   .name = "VehicleCtrlTask",
-  .stack_size = 256 * 4,
+  .stack_size = 192 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for StateCtrlTask */
 osThreadId_t StateCtrlTaskHandle;
 const osThreadAttr_t StateCtrlTask_attributes = {
   .name = "StateCtrlTask",
-  .stack_size = 256 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for ProcessCAN_Task */
 osThreadId_t ProcessCAN_TaskHandle;
 const osThreadAttr_t ProcessCAN_Task_attributes = {
   .name = "ProcessCAN_Task",
-  .stack_size = 256 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for HandleGUI_Task */
 osThreadId_t HandleGUI_TaskHandle;
 const osThreadAttr_t HandleGUI_Task_attributes = {
   .name = "HandleGUI_Task",
-  .stack_size = 256 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityBelowNormal,
 };
 /* Definitions for LogVehicleData_Task */
 osThreadId_t LogVehicleData_TaskHandle;
 const osThreadAttr_t LogVehicleData_Task_attributes = {
   .name = "LogVehicleData_Task",
-  .stack_size = 256 * 4,
+  .stack_size = 192 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for VehicleFaultHandler_Task */
 osThreadId_t VehicleFaultHandler_TaskHandle;
 const osThreadAttr_t VehicleFaultHandler_Task_attributes = {
   .name = "VehicleFaultHandler_Task",
-  .stack_size = 256 * 4,
+  .stack_size = 192 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for StateTransitionQueue */
@@ -259,10 +259,10 @@ osMutexId_t PedalsFaults_MutexHandle;
 const osMutexAttr_t PedalsFaults_Mutex_attributes = {
   .name = "PedalsFaults_Mutex"
 };
-/* Definitions for VehicleDataToLog_Mutex */
-osMutexId_t VehicleDataToLog_MutexHandle;
-const osMutexAttr_t VehicleDataToLog_Mutex_attributes = {
-  .name = "VehicleDataToLog_Mutex"
+/* Definitions for DataToLog_Mutex */
+osMutexId_t DataToLog_MutexHandle;
+const osMutexAttr_t DataToLog_Mutex_attributes = {
+  .name = "DataToLog_Mutex"
 };
 /* Definitions for CalibrationDataReceived_Event */
 osEventFlagsId_t CalibrationDataReceived_EventHandle;
@@ -360,8 +360,8 @@ void MX_FREERTOS_Init(void) {
   /* creation of PedalsFaults_Mutex */
   PedalsFaults_MutexHandle = osMutexNew(&PedalsFaults_Mutex_attributes);
 
-  /* creation of VehicleDataToLog_Mutex */
-  VehicleDataToLog_MutexHandle = osMutexNew(&VehicleDataToLog_Mutex_attributes);
+  /* creation of DataToLog_Mutex */
+  DataToLog_MutexHandle = osMutexNew(&DataToLog_Mutex_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -408,19 +408,19 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* creation of StateTransitionQueue */
-  StateTransitionQueueHandle = osMessageQueueNew (8, sizeof(SystemEvent_t), &StateTransitionQueue_attributes);
+  StateTransitionQueueHandle = osMessageQueueNew (4, sizeof(SystemEvent_t), &StateTransitionQueue_attributes);
 
   /* creation of CanMsgQueue */
-  CanMsgQueueHandle = osMessageQueueNew (32, sizeof(CanMsg_t), &CanMsgQueue_attributes);
+  CanMsgQueueHandle = osMessageQueueNew (16, sizeof(CanMsg_t), &CanMsgQueue_attributes);
 
   /* creation of PedalsADCQueue */
-  PedalsADCQueueHandle = osMessageQueueNew (8, sizeof(PedalsADC_t), &PedalsADCQueue_attributes);
+  PedalsADCQueueHandle = osMessageQueueNew (1, sizeof(PedalsADC_t), &PedalsADCQueue_attributes);
 
   /* creation of CalibrationDataQueue */
-  CalibrationDataQueueHandle = osMessageQueueNew (8, sizeof(CalibrationData_t), &CalibrationDataQueue_attributes);
+  CalibrationDataQueueHandle = osMessageQueueNew (1, sizeof(CalibrationData_t), &CalibrationDataQueue_attributes);
 
   /* creation of ADCsToLogQueue */
-  ADCsToLogQueueHandle = osMessageQueueNew (8, sizeof(ADCsToLog_t), &ADCsToLogQueue_attributes);
+  ADCsToLogQueueHandle = osMessageQueueNew (4, sizeof(ADCsToLog_t), &ADCsToLogQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -495,38 +495,39 @@ void Task_LogTaskStackUsage(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	  p_freertos_task_stack_usage->used_bytes_LogTaskStackUsage =
-	        LogTaskStackUsage_attributes.stack_size - osThreadGetStackSpace(LogTaskStackUsageHandle);
 
-	  p_freertos_task_stack_usage->used_bytes_CalibrateTask =
-	        CalibrateTask_attributes.stack_size - osThreadGetStackSpace(CalibrateTaskHandle);
+	  p_freertos_task_stack_usage->unused_words_LogTaskStackUsage =
+	  	        osThreadGetStackSpace(LogTaskStackUsageHandle) / sizeof(uint32_t);
 
-	  p_freertos_task_stack_usage->used_bytes_RTD_Task =
-	        RTD_Task_attributes.stack_size - osThreadGetStackSpace(RTD_TaskHandle);
+	  	  p_freertos_task_stack_usage->unused_words_CalibrateTask =
+	  	        osThreadGetStackSpace(CalibrateTaskHandle) / sizeof(uint32_t);
 
-	  p_freertos_task_stack_usage->used_bytes_ProcessADC_Task =
-	        ProcessADC_Task_attributes.stack_size - osThreadGetStackSpace(ProcessADC_TaskHandle);
+	  	  p_freertos_task_stack_usage->unused_words_RTD_Task =
+	  	        osThreadGetStackSpace(RTD_TaskHandle) / sizeof(uint32_t);
 
-	  p_freertos_task_stack_usage->used_bytes_PedalsDataTask =
-	        PedalsDataTask_attributes.stack_size - osThreadGetStackSpace(PedalsDataTaskHandle);
+	  	  p_freertos_task_stack_usage->unused_words_ProcessADC_Task =
+	  	        osThreadGetStackSpace(ProcessADC_TaskHandle) / sizeof(uint32_t);
 
-	  p_freertos_task_stack_usage->used_bytes_VehicleCtrlTask =
-	        VehicleCtrlTask_attributes.stack_size - osThreadGetStackSpace(VehicleCtrlTaskHandle);
+	  	  p_freertos_task_stack_usage->unused_words_PedalsDataTask =
+	  	        osThreadGetStackSpace(PedalsDataTaskHandle) / sizeof(uint32_t);
 
-	  p_freertos_task_stack_usage->used_bytes_StateCtrlTask =
-	        StateCtrlTask_attributes.stack_size - osThreadGetStackSpace(StateCtrlTaskHandle);
+	  	  p_freertos_task_stack_usage->unused_words_VehicleCtrlTask =
+	  	        osThreadGetStackSpace(VehicleCtrlTaskHandle) / sizeof(uint32_t);
 
-	  p_freertos_task_stack_usage->used_bytes_ProcessCAN_Task =
-	        ProcessCAN_Task_attributes.stack_size - osThreadGetStackSpace(ProcessCAN_TaskHandle);
+	  	  p_freertos_task_stack_usage->unused_words_StateCtrlTask =
+	  	        osThreadGetStackSpace(StateCtrlTaskHandle) / sizeof(uint32_t);
 
-	  p_freertos_task_stack_usage->used_bytes_HandleGUI_Task =
-	        HandleGUI_Task_attributes.stack_size - osThreadGetStackSpace(HandleGUI_TaskHandle);
+	  	  p_freertos_task_stack_usage->unused_words_ProcessCAN_Task =
+	  	        osThreadGetStackSpace(ProcessCAN_TaskHandle) / sizeof(uint32_t);
 
-	  p_freertos_task_stack_usage->used_bytes_LogVehicleData_Task =
-	        LogVehicleData_Task_attributes.stack_size - osThreadGetStackSpace(LogVehicleData_TaskHandle);
+	  	  p_freertos_task_stack_usage->unused_words_HandleGUI_Task =
+	  	        osThreadGetStackSpace(HandleGUI_TaskHandle) / sizeof(uint32_t);
 
-	  p_freertos_task_stack_usage->used_bytes_VehicleFaultHandler_Task =
-	        VehicleFaultHandler_Task_attributes.stack_size - osThreadGetStackSpace(VehicleFaultHandler_TaskHandle);
+	  	  p_freertos_task_stack_usage->unused_words_LogVehicleData_Task =
+	  	        osThreadGetStackSpace(LogVehicleData_TaskHandle) / sizeof(uint32_t);
+
+	  	  p_freertos_task_stack_usage->unused_words_VehicleFaultHandler_Task =
+	  	        osThreadGetStackSpace(VehicleFaultHandler_TaskHandle) / sizeof(uint32_t);
 
     osDelay(1);
   }

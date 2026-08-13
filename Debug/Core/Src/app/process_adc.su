@@ -1,2 +1,2 @@
 ../Core/Src/app/process_adc.c:20:6:Task_Process_ADC	56	static
-../Core/Src/app/process_adc.c:69:6:Clamp_ADC	16	static
+../Core/Src/app/process_adc.c:78:6:Clamp_ADC	16	static

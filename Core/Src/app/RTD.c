@@ -32,6 +32,8 @@ void Task_RTD(void *argument)
 	TickType_t button_start_tick;
 	bool enable_calibration = false;
 
+	SystemState_t current_state;
+
 	INVERTER_DISABLE();
 
   /* Infinite loop */
@@ -61,11 +63,20 @@ void Task_RTD(void *argument)
 	osMutexRelease(mutex_Inverter_Setpoints_1Handle);
 	*/
 
+	  current_state = Get_Current_State();
 
-	  osMutexAcquire(SystemState_MutexHandle, osWaitForever);
 
-	  if (system_state != STATE_RTD && !calibration_active && !p_inverter_status_1->quit_inverter_on)
+	  /* Only enter calibration if we aren't in RTD and if the inverter isn't fully enabled */
+	  if (current_state != STATE_RTD && !calibration_active && !p_inverter_status_1->quit_inverter_on)
 	  {
+
+		  /*
+		   * Switched from the freeRTOS timer callback to enable calibration to checking within
+		   * the task itself as it seemed better to keep all the mutex accessing and queue sending in
+		   * the main loop instead of an interruptt
+		   *
+		   * Request to enter calibration is sent after the button is pressed for CALIBRATION_ENABLE_PERIOD_MILLISECONDS
+		   */
 		  if (rtd_button_pressed) {
 			  if (!rtd_button_was_pressed) {
 				  rtd_button_was_pressed = true;
@@ -83,7 +94,7 @@ void Task_RTD(void *argument)
 		  }
 	  }
 
-	  if (enable_calibration && system_state != STATE_CALIBRATION)
+	  if (enable_calibration && current_state != STATE_CALIBRATION)
 	  {
 		  system_event = EVENT_ENTER_CALIBRATION;
 		  if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
@@ -91,16 +102,27 @@ void Task_RTD(void *argument)
 			  p_queue_errors_data->state_transition_errors++;
 		  }
 	  }
-	  else {
+	  else if (enable_calibration && current_state == STATE_CALIBRATION)
+	  {
 		  enable_calibration = false;
 	  }
 
 
-	  if (system_state != STATE_CALIBRATION) {
+	  /* If we aren't calibrating, follow the inverter startup sequence from the amk datasheet
+	   * (page 93)
+	   */
+	  if (current_state != STATE_CALIBRATION) {
 		  osMutexAcquire(VehicleState_MutexHandle, osWaitForever);
 		  osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
 
-		  inverter_voltage_percentage = (p_vehicle_state_data->inverter_voltage * 100) / (p_vehicle_state_data->BMS_voltage);
+		  if (p_vehicle_state_data->BMS_voltage > 0)
+		  {
+		      inverter_voltage_percentage = (p_vehicle_state_data->inverter_voltage * 100) / p_vehicle_state_data->BMS_voltage;
+		  }
+		  else
+		  {
+		      inverter_voltage_percentage = 0;
+		  }
 
 		  if (inverter_voltage_percentage >= PRECHARGE_PERCENTAGE && p_vehicle_state_data->inverter_voltage > 40)
 		  {
@@ -111,8 +133,6 @@ void Task_RTD(void *argument)
 			  p_vehicle_state_data -> precharge_voltage_met = false;
 		  }
 
-		  PRECHARGE_SIGNAL_ENABLE();
-		  p_vehicle_state_data -> precharge_signal_sent = true;
 		  /*
 		  if (p_vehicle_state_data -> precharge_voltage_met && p_inverter_status_1->system_ready)
 		  {
@@ -128,6 +148,8 @@ void Task_RTD(void *argument)
 
 		  //precharge_complete_received = CHECK_PRECHARGE_COMPLETE_STATUS();
 
+		  PRECHARGE_SIGNAL_ENABLE();
+		  p_vehicle_state_data -> precharge_signal_sent = true;
 		  precharge_complete_received = true;
 
 		  if (precharge_complete_received && p_vehicle_state_data -> precharge_signal_sent)
@@ -176,9 +198,11 @@ void Task_RTD(void *argument)
 		  }
 		*/
 
+
+		  /* Driver can enter RTD only if the brakes are pressed */
 		  if (p_inverter_status_1->quit_inverter_on &&
 			  !p_vehicle_state_data->inverter_enabled &&
-			  system_state == STATE_IDLE)
+			  current_state == STATE_IDLE)
 		  {
 			  if(p_vehicle_state_data->brakes_engaged == true) {
 				  RTD_BUTTON_LIGHT_ON();
@@ -202,8 +226,10 @@ void Task_RTD(void *argument)
 			  }
 
 		  }
+		  /* RTD can be exited by pressing the RTD button
+		   * mainly used for bench testing */
 		  else if (p_vehicle_state_data->inverter_enabled &&
-				   system_state == STATE_RTD)
+				   current_state == STATE_RTD)
 		  {
 			  if (rtd_button_pressed)
 			  {
@@ -224,7 +250,6 @@ void Task_RTD(void *argument)
 			osMutexRelease(InverterData1_MutexHandle);
 	  }
 
-	osMutexRelease(SystemState_MutexHandle);
 
     osDelay(1);
   }

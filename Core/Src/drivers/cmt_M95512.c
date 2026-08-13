@@ -25,46 +25,29 @@ static HAL_StatusTypeDef EEPROM_isSpiReady(){
 }
 
 static HAL_StatusTypeDef EEPROM_WaitStandbyState(void) {
+    EEPROM_SELECT;
+    if(HAL_SPI_Transmit(&hspi2, (uint8_t[]){RDSR}, SIZE_1, EEPROM_TIMEOUT) != HAL_OK) {
+        EEPROM_RELEASE;
+        return HAL_ERROR;
+    }
 
-	EEPROM_SELECT;
-	// Transmit the command to read the status register
-	if(HAL_SPI_Transmit(&hspi2, (uint8_t[]){RDSR}, SIZE_1, EEPROM_TIMEOUT) != HAL_OK) {
-		EEPROM_RELEASE;
-		return HAL_ERROR; // Failed to transmit the RDSR command
-	}
-	uint32_t startTime = HAL_GetTick(); // Store the start time
-	uint8_t status = 0;
+    uint32_t startTime = HAL_GetTick();
+    uint8_t status;
 
-	// Check the Write In Progress bit
-	// Exit the loop if the EEPROM is not busy
-	while( ((status) != 0) && (WIP != 0) )
-	{
+    do {
+        if (HAL_GetTick() - startTime >= EEPROM_TIMEOUT) {
+            EEPROM_RELEASE;
+            return HAL_TIMEOUT;
+        }
+        if(HAL_SPI_Receive(&hspi2, &status, SIZE_1, EEPROM_TIMEOUT) != HAL_OK) {
+            EEPROM_RELEASE;
+            return HAL_ERROR;
+        }
+        HAL_Delay(1);
+    } while (status & WIP); // loop while WIP bit is set
 
-		// Check if the timeout has been exceeded
-		if (HAL_GetTick() - startTime >= EEPROM_TIMEOUT)
-		{
-
-			EEPROM_RELEASE;
-			return HAL_TIMEOUT; // Return timeout status if we exceed the timeout duration
-
-		}
-
-		// Receive the status register
-		if(HAL_SPI_Receive(&hspi2, &status, SIZE_1, EEPROM_TIMEOUT) != HAL_OK)
-		{
-
-			EEPROM_RELEASE;
-			return HAL_ERROR; // Error in receiving data
-
-		}
-
-		// Adding a delay to avoid spamming the SPI bus too aggressively
-		HAL_Delay(1);
-
-	};
-
-	EEPROM_RELEASE;
-	return HAL_OK; // EEPROM is ready
+    EEPROM_RELEASE;
+    return HAL_OK;
 }
 
 // Enable write operation
@@ -192,6 +175,8 @@ HAL_StatusTypeDef EEPROM_WritePage(const uint16_t address, const uint8_t *data, 
 		return HAL_ERROR; // Write operation did not complete successfully.
 
 	}
+
+	return HAL_OK;
 }
 
 // Write any amount of data across several pages in an EEPROM

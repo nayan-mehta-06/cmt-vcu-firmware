@@ -16,18 +16,24 @@
 #include "config/can_ids.h"
 #include "config/vcu_config.h"
 
+/*
+ * Convert the values sent from the inverters into individual readable values
+ */
 
 void setInverterData1(InverterData_t *inv_data, uint8_t *data)
 {
 	inv_data->status 					= (uint16_t)(data[0] | data[1] << 8);
-	inv_data->actual_speed_value 		= (int16_t)(data[2] | data[3] << 8);
+	inv_data->actual_speed_value 		= (int16_t)(data[2] | data[3] << 8);	/* 1/rpm units */
 	inv_data->torque_current_raw 		= (int16_t)(data[4] | data[5] << 8);
 	inv_data->magnetizing_current_raw 	= (int16_t)(data[6] | data[7] << 8);
 
+
+	/* Equation from page 83 of the amk datasheet */
     inv_data->torque_current = ((float)inv_data->torque_current_raw * ID110) / 16384.0f;
     inv_data->magnetizing_current = ((float)inv_data->magnetizing_current_raw * ID110) / 16384.0f;
 }
 
+/* Used for debugging */
 void processInverterStatus(InverterStatus_t *inv_status, uint16_t status)
 {
     inv_status->system_ready    	= (status & AMK_STATUS_SYSTEM_READY_MASK) != 0U;
@@ -42,13 +48,16 @@ void processInverterStatus(InverterStatus_t *inv_status, uint16_t status)
 
 void setInverterData2(InverterData_t *inv_data, uint8_t *data)
 {
-	inv_data->temp_motor 		= (int16_t)(data[0] | data[1] << 8);
-	inv_data->temp_inverter 	= (int16_t)(data[2] | data[3] << 8);
+	inv_data->temp_motor 		= (int16_t)(data[0] | data[1] << 8); /* 0.1 degree units */
+	inv_data->temp_inverter 	= (int16_t)(data[2] | data[3] << 8); /* 0.1 degree units */
 	inv_data->diagnostic_number = (uint16_t)(data[4] | data[5] << 8);
-	inv_data->temp_IGBT 		= (int16_t)(data[6] | data[7] << 8);
+	inv_data->temp_IGBT 		= (int16_t)(data[6] | data[7] << 8); /* 0.1 degree units */
 }
 
-
+/*
+ * Transmit the control word and requested torque to the inverter
+ * Whatever calls this function should acquire the inverter's mutex first
+ */
 bool transmit_inverter_command(InverterSetpoints_t *p_inverter_setpoints, uint8_t inverter_node_number)
 {
 	bool torque_command_transmission_sucessful = false;

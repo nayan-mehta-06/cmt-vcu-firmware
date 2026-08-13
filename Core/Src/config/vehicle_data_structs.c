@@ -71,15 +71,15 @@ void initialise_testing_VCU_data(TestingVCU_t* testing_VCU_data)
 
 void initialise_freertos_task_stack_usage(FreertosTaskStackUsage_t* freertos_task_stack_usage)
 {
-	freertos_task_stack_usage->used_bytes_LogTaskStackUsage = 0;
-	freertos_task_stack_usage->used_bytes_CalibrateTask = 0;
-	freertos_task_stack_usage->used_bytes_RTD_Task = 0;
-	freertos_task_stack_usage->used_bytes_ProcessADC_Task = 0;
-	freertos_task_stack_usage->used_bytes_PedalsDataTask = 0;
-	freertos_task_stack_usage->used_bytes_VehicleCtrlTask = 0;
-	freertos_task_stack_usage->used_bytes_StateCtrlTask = 0;
-	freertos_task_stack_usage->used_bytes_ProcessCAN_Task = 0;
-	freertos_task_stack_usage->used_bytes_HandleGUI_Task = 0;
-	freertos_task_stack_usage->used_bytes_LogVehicleData_Task = 0;
-	freertos_task_stack_usage->used_bytes_VehicleFaultHandler_Task = 0;
+	freertos_task_stack_usage->unused_words_LogTaskStackUsage = 0;
+	freertos_task_stack_usage->unused_words_CalibrateTask = 0;
+	freertos_task_stack_usage->unused_words_RTD_Task = 0;
+	freertos_task_stack_usage->unused_words_ProcessADC_Task = 0;
+	freertos_task_stack_usage->unused_words_PedalsDataTask = 0;
+	freertos_task_stack_usage->unused_words_VehicleCtrlTask = 0;
+	freertos_task_stack_usage->unused_words_StateCtrlTask = 0;
+	freertos_task_stack_usage->unused_words_ProcessCAN_Task = 0;
+	freertos_task_stack_usage->unused_words_HandleGUI_Task = 0;
+	freertos_task_stack_usage->unused_words_LogVehicleData_Task = 0;
+	freertos_task_stack_usage->unused_words_VehicleFaultHandler_Task = 0;
 }

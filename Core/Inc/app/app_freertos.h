@@ -3,6 +3,9 @@
  *
  *  Created on: 14 Jul 2026
  *      Author: mehta
+ *
+ *	Allows all other files to access the freeRTOS objects defined in freertos.c
+ *
  */
 
 #ifndef INC_APP_APP_FREERTOS_H_
@@ -27,6 +30,7 @@ extern osMutexId_t InverterData2_MutexHandle;
 extern osMutexId_t PedalsState_MutexHandle;
 extern osMutexId_t PedalsFaults_MutexHandle;
 extern osMutexId_t DataToLog_MutexHandle;
+extern osMutexId_t RawADC_Values_MutexHandle;
 
 extern osTimerId_t RTD_Button_TimerHandle;
 extern osTimerId_t InverterCAN_Transmit_TimerHandle;

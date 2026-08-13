@@ -3,11 +3,15 @@
  *
  *  Created on: 18 Jul 2026
  *      Author: mehta
+ *
+ *	header file for calibration.c
  */
 
 #ifndef INC_APP_CALIBRATION_H_
 #define INC_APP_CALIBRATION_H_
 
+
+// Event bits for the CalibrationDataReceived_Event flag
 #define CALIBRATION_DATA_READY (1U << 0)
 #define CALIBRATION_DATA_RECEIVED (1U << 1)
 

@@ -16,6 +16,8 @@
 #include <math.h>
 #include "main.h"
 
+
+// If there is a new message, store in the important parts and send it to the process_can_msg task
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	CanMsg_t msg;
 
@@ -37,6 +39,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 }
 
 
+// Code below has been taken from 2025 Firmware
 
 // Primary CANbus error flag = 8 error counts
 // Threshold for error passive is 120 error count

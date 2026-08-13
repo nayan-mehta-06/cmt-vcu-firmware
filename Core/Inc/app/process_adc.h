@@ -30,6 +30,7 @@ typedef struct ADCsToLog
 
 } ADCsToLog_t;
 
+// Not used
 #define MIN_ADC_VAL 30
 #define MAX_ADC_VAL 3070
 

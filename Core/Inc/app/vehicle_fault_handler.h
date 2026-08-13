@@ -10,7 +10,7 @@
 
 #include <config/vehicle_data_structs.h>
 
-#define NO_ERRORS 0
+#define NO_ERRORS 0 // Fault flags with no errors will have no bits set to 1
 
 void Task_VehicleFaultHandler(void *argument);
 

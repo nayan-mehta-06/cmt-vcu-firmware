@@ -29,6 +29,10 @@ void Task_Process_ADC(void *argument)
 	/* Infinite loop */
 	for(;;)
 	{
+
+		/* Get the adc values from the global raw_adc_values array from main.c */
+		osMutexAcquire(RawADC_Values_MutexHandle, osWaitForever);
+
 		apps_1_adc = Get_ADC_Channel(APPS1_ADC_CHANNEL);
 		apps_2_adc = Get_ADC_Channel(APPS2_ADC_CHANNEL);
 		bse_adc = Get_ADC_Channel(BSE_ADC_CHANNEL);
@@ -38,6 +42,8 @@ void Task_Process_ADC(void *argument)
 		bspd_cs_adc = Get_ADC_Channel(BSPD_CS_ADC_CHANNEL);
 		sas_adc = Get_ADC_Channel(SAS_ADC_CHANNEL);
 		spare_adc = Get_ADC_Channel(SPARE_ADC_CHANNEL);
+
+		osMutexRelease(RawADC_Values_MutexHandle);
 
 		//Clamp_ADC(&apps_1_adc);
 
@@ -51,11 +57,14 @@ void Task_Process_ADC(void *argument)
 		adcs_to_log.sas_adc = sas_adc;
 		adcs_to_log.spare_adc = spare_adc;
 
+
+		/* Send adc values to the calibration and process pedals data tasks */
 		if (osMessageQueuePut(PedalsADCQueueHandle, &pedals_adc_data, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
 		{
 			p_queue_errors_data->pedals_adc_errors++;
 		}
 
+		/* Send adc values to the logg vehicle data task */
 		if (osMessageQueuePut(ADCsToLogQueueHandle, &adcs_to_log, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
 		{
 			p_queue_errors_data->logging_adc_errors++;

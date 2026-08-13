@@ -14,6 +14,10 @@
 
 extern InverterSetpoints_t* p_inverter_setpoints_1;
 
+
+// Bit masks used to check which status codes the inverters have sent to VCU,
+// 		allows for easier debugging with the InverterStatus_t struct
+
 #define AMK_STATUS_SYSTEM_READY_MASK       	(1U << AMK_STATUS_SYSTEM_READY)
 #define AMK_STATUS_ERROR_ACTIVE_MASK        (1U << AMK_STATUS_ERROR)
 #define AMK_STATUS_WARNING_ACTIVE_MASK      (1U << AMK_STATUS_WARN)

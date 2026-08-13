@@ -12,6 +12,11 @@
 #include <stdint.h>
 #include "cmsis_os2.h"
 
+
+/*
+ * Struct to hold the number of errors from putting items into queues
+ * Used for debugging
+ * */
 typedef struct QueueErrors
 {
 
@@ -23,6 +28,11 @@ typedef struct QueueErrors
 
 } QueueErrors_t;
 
+
+/*
+ * Struct to hold information about the car's current state
+ * Primarily used for RTD sequence
+ * */
 typedef struct VehicleState
 {
 
@@ -41,6 +51,9 @@ typedef struct VehicleState
 
 } VehicleState_t;
 
+/*
+ * Struct to hold the current positions and %'s of the pedals
+ * */
 typedef struct PedalsState
 {
 
@@ -51,6 +64,10 @@ typedef struct PedalsState
 
 } PedalsState_t;
 
+/*
+ * Struct to hold the calibration data sent from the calibration task
+ * to the process pedals data task
+ * */
 typedef struct CalibrationData
 {
 
@@ -64,6 +81,9 @@ typedef struct CalibrationData
 
 } CalibrationData_t;
 
+/*
+ * Struct to show the status of a pedal for debugging
+ * */
 typedef enum
 {
     NORMAL			= 0,
@@ -71,6 +91,9 @@ typedef enum
 	OPEN_CIRCUIT	= 2,
 } PedalStatus_t;
 
+/*
+ * Struct to hold all pedal fault statuses
+ * */
 typedef struct PedalsFaults
 {
 
@@ -82,7 +105,9 @@ typedef struct PedalsFaults
 
 } PedalsFaults_t;
 
-
+/*
+ * Struct for testing all inputs/outputs of VCU
+ * */
 typedef struct TestingVCU
 {
 
@@ -105,20 +130,23 @@ typedef struct TestingVCU
 
 } TestingVCU_t;
 
-
+/*
+ * Struct to determine the utilisation of stack size allocation
+ * of each task in CubeMX for optimisaton
+ * */
 typedef struct FreertosTaskStackUsage {
 
-	uint32_t used_bytes_LogTaskStackUsage;
-	uint32_t used_bytes_CalibrateTask;
-	uint32_t used_bytes_RTD_Task;
-	uint32_t used_bytes_ProcessADC_Task;
-	uint32_t used_bytes_PedalsDataTask;
-	uint32_t used_bytes_VehicleCtrlTask;
-	uint32_t used_bytes_StateCtrlTask;
-	uint32_t used_bytes_ProcessCAN_Task;
-	uint32_t used_bytes_HandleGUI_Task;
-	uint32_t used_bytes_LogVehicleData_Task;
-	uint32_t used_bytes_VehicleFaultHandler_Task;
+	uint32_t unused_words_LogTaskStackUsage;
+	uint32_t unused_words_CalibrateTask;
+	uint32_t unused_words_RTD_Task;
+	uint32_t unused_words_ProcessADC_Task;
+	uint32_t unused_words_PedalsDataTask;
+	uint32_t unused_words_VehicleCtrlTask;
+	uint32_t unused_words_StateCtrlTask;
+	uint32_t unused_words_ProcessCAN_Task;
+	uint32_t unused_words_HandleGUI_Task;
+	uint32_t unused_words_LogVehicleData_Task;
+	uint32_t unused_words_VehicleFaultHandler_Task;
 
 } FreertosTaskStackUsage_t;
 

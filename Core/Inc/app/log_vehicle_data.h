@@ -12,6 +12,11 @@
 #include "config/amk_data_structs.h"
 #include "app/process_adc.h"
 
+/*
+ * Structs to hold the values that will be logged to CAN
+ *
+ * */
+
 typedef struct ConvertedADCs
 {
 
@@ -51,20 +56,23 @@ typedef struct DataToLog{
 
 extern DataToLog_t* p_data_to_log;
 
+// Taken from 2025 VCU Firmware
 #define BPPS_MIN_VOLTAGE 0.5
 #define BPPS_MAX_VOLTAGE 4.5
 #define BPPS_ADC_VOLTAGE_DIVIDER_CONVERSION_RATIO 0.6
 #define PSI_TO_BAR_CONVERSION_FACTOR 0.0689476
 
+// Used to calculate the input voltage of each sensor into VCU
 #define ADC_SUPPLY_VOLTAGE 3.3f
 #define ADC_MAX_READING 4095.0f
-#define V_DIVIDER_GAIN 1.5f
+#define V_DIVIDER_GAIN 1.5f	//Calculated from the 1k || 2k voltage divider
 
 void Task_LogVehicleData(void *argument);
 
 float Calc_Brake_Pressure(uint16_t bpps_adc);
 float Calc_BSPD_Sensor_Current(uint16_t bspd_cs_adc);
 float Calc_Steering_Angle(uint16_t sas_cs_adc);
+float Calc_Sensor_Input_Voltage(uint16_t adc_val);
 void Convert_ADCs(ConvertedADCs_t* converted_adcs, ADCsToLog_t raw_adcs);
 
 void Get_Inverter_Data_To_Log(InverterDataToLog_t* inv_data_to_log,

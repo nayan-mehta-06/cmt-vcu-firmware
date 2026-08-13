@@ -15,7 +15,8 @@
 void Task_State_Ctrl(void *argument)
 {
   /* USER CODE BEGIN Start_State_Ctrl_Task */
-	SystemEvent_t most_recent_transition;
+
+	SystemEvent_t most_recent_transition = EVENT_NONE;
   /* Infinite loop */
   for(;;)
   {
@@ -25,6 +26,9 @@ void Task_State_Ctrl(void *argument)
 								  0) != osOK)
 			{
 				// p_queue_errors_data->state_transition_errors++;
+
+				// Reset to a no-transition state to prevent any errors
+				most_recent_transition = EVENT_NONE;
 			}
 
 	  osMutexAcquire(SystemState_MutexHandle, osWaitForever);
@@ -46,9 +50,9 @@ void Task_State_Ctrl(void *argument)
 				  break;
 
 			  case STATE_CALIBRATION:
-				  if (most_recent_transition == EVENT_ENTER_CALIBRATION)
+				  if (most_recent_transition == EVENT_CALIBRATION_COMPLETE)
 				  {
-					  system_state = STATE_CALIBRATION;
+					  system_state = STATE_IDLE;
 				  }
 				  else if (most_recent_transition == EVENT_FAULT)
 				  {

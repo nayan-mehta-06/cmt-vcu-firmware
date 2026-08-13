@@ -28,6 +28,8 @@ void Task_VehicleFaultHandler(void *argument)
 	SystemEvent_t system_event;
 	SystemState_t current_state;
 
+	osDelay(4000); // Prevents faulting and unfaulting as soon as the car is turned on
+
 	for (;;)
 	{
 		current_state = Get_Current_State();
@@ -43,7 +45,7 @@ void Task_VehicleFaultHandler(void *argument)
 			if (pedals_faults_flags == NO_ERRORS
 				&& apps_implausibility_flags == NO_ERRORS)
 			{
-				while (current_state != STATE_FAULTED)
+				while (current_state == STATE_FAULTED)
 				{
 					system_event = EVENT_CLEAR_FAULT;
 				    if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
@@ -52,6 +54,8 @@ void Task_VehicleFaultHandler(void *argument)
 				    }
 
 				    current_state = Get_Current_State();
+
+				    osDelay(1);
 				}
 			}
 		}
@@ -60,7 +64,7 @@ void Task_VehicleFaultHandler(void *argument)
 			if (pedals_faults_flags != NO_ERRORS
 				|| apps_implausibility_flags != NO_ERRORS)
 			{
-				while (system_state != STATE_FAULTED)
+				while (current_state != STATE_FAULTED)
 				{
 					system_event = EVENT_FAULT;
 				    if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
@@ -69,6 +73,8 @@ void Task_VehicleFaultHandler(void *argument)
 				    }
 
 				    current_state = Get_Current_State();
+
+				    osDelay(1);
 				}
 			}
 		}
@@ -77,7 +83,7 @@ void Task_VehicleFaultHandler(void *argument)
 		{
 			if (screenshot_flag == NO_ERRORS)
 			{
-				while (current_state != STATE_RTD)
+				while (current_state == STATE_SCREENSHOTED)
 				{
 					system_event = EVENT_SCREENSHOT_OVER;
 				    if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
@@ -86,6 +92,8 @@ void Task_VehicleFaultHandler(void *argument)
 				    }
 
 				    current_state = Get_Current_State();
+
+				    osDelay(1);
 				}
 			}
 		}
@@ -93,7 +101,7 @@ void Task_VehicleFaultHandler(void *argument)
 		{
 			if (screenshot_flag != NO_ERRORS)
 			{
-				while (system_state != STATE_SCREENSHOTED)
+				while (current_state == STATE_RTD)
 				{
 					system_event = EVENT_SCREENSHOT;
 				    if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
@@ -102,6 +110,8 @@ void Task_VehicleFaultHandler(void *argument)
 				    }
 
 				    current_state = Get_Current_State();
+
+				    osDelay(1);
 				}
 			}
 		}

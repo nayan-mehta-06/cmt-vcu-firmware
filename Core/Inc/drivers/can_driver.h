@@ -37,6 +37,10 @@ void CAN_2_Error_Handler();
 #define SEVEN_BYTES 7
 #define EIGHT_BYTES 8
 
+/*
+ * Struct used for transferring receive CAN messages
+ * to the process can msgs task
+ * */
 typedef struct
 {
 

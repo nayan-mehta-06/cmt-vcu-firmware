@@ -13,6 +13,7 @@
 
 uint16_t Get_ADC_Channel(uint8_t channel);
 
+// Each channel corresponds to their index in the raw_adc_values array
 #define APPS1_ADC_CHANNEL 6
 #define APPS2_ADC_CHANNEL 7
 #define BSE_ADC_CHANNEL 4
