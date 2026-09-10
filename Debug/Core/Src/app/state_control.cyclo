@@ -1,2 +1,2 @@
 ../Core/Src/app/state_control.c:15:6:Task_State_Ctrl	18
-../Core/Src/app/state_control.c:104:15:Get_Current_State	1
+../Core/Src/app/state_control.c:108:15:Get_Current_State	1

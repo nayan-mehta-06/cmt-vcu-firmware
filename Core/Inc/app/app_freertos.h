@@ -31,6 +31,7 @@ extern osMutexId_t PedalsState_MutexHandle;
 extern osMutexId_t PedalsFaults_MutexHandle;
 extern osMutexId_t DataToLog_MutexHandle;
 extern osMutexId_t RawADC_Values_MutexHandle;
+extern osMutexId_t EintData_MutexHandle;
 
 extern osTimerId_t RTD_Button_TimerHandle;
 extern osTimerId_t InverterCAN_Transmit_TimerHandle;
@@ -42,6 +43,9 @@ extern osTimerId_t APPS_Implausibility_TimerHandle;
 extern osTimerId_t Screenshot_TimerHandle;
 extern osTimerId_t CAN_2_Transmit_Timer_1Handle;
 extern osTimerId_t CAN_2_Transmit_Timer_2Handle;
+extern osTimerId_t Eint_CAN_Transmit_TimerHandle;
+extern osTimerId_t INV_1_Error_Reset_TimerHandle;
+extern osTimerId_t INV_2_Error_Reset_TimerHandle;
 
 extern osEventFlagsId_t CalibrationDataReceived_EventHandle;
 extern osEventFlagsId_t PedalsOutOfRangeFault_EventHandle;

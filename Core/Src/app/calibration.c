@@ -65,6 +65,7 @@ void Task_Car_Calibration(void *argument)
 		  {
 			  RTD_BUTTON_LIGHT_ON();
 			  rtd_button_pressed = CHECK_RTD_BUTTON_STATUS();
+			  osDelay(1);
 		  }
 		  RTD_BUTTON_LIGHT_OFF();
 
@@ -158,7 +159,7 @@ void Task_Car_Calibration(void *argument)
 		brake_pedal_calibration_values[3] = (calibration_data.bse_max_value / 256);
 
 		// Save data to EEPROM
-		vTaskSuspendAll();
+		//vTaskSuspendAll();
 
 		// Enable writing to EEPROM
 		EEPROM_WriteEnable();
@@ -173,7 +174,7 @@ void Task_Car_Calibration(void *argument)
 
 		EEPROM_WriteDisable();
 
-		xTaskResumeAll();
+		//xTaskResumeAll();
 
 		  osMutexAcquire(VehicleState_MutexHandle, osWaitForever);
 		  p_vehicle_state_data->calibrating = false;

@@ -42,6 +42,21 @@ void Task_VehicleFaultHandler(void *argument)
 		{
 			INVERTER_DISABLE();
 
+			// Testing Code
+			/*
+			INVERTER_ENABLE();
+			RTD_BUTTON_LIGHT_ON();
+			RTD_BUZZER_ON();
+			PRECHARGE_SIGNAL_ENABLE();
+			SPARE_5V_OUT_ON();
+			SPARE_24V_OUT_ON();
+			p_vehicle_state_data->precharge_complete = CHECK_PRECHARGE_COMPLETE_STATUS();
+			p_vehicle_state_data->air_aux_closed = CHECK_AIR_STATUS();
+			p_vehicle_state_data->bse_fault = CHECK_BSE_FAULT_STATUS();
+			p_vehicle_state_data->cs_fault = CHECK_CS_FAULT_STATUS();
+			p_vehicle_state_data->plausibility_fault = CHECK_PLAUSIBILITY_FAULT_STATUS();
+			*/
+
 			if (pedals_faults_flags == NO_ERRORS
 				&& apps_implausibility_flags == NO_ERRORS)
 			{

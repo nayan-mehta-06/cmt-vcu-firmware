@@ -19,6 +19,9 @@ extern VehicleState_t* p_vehicle_state_data;
 
 void Task_Vehicle_Ctrl(void *argument);
 void InverterCAN_Transmit_Callback(void *argument);
+void INV_1_Error_Reset_Timer_Callback(void *argument);
+void INV_2_Error_Reset_Timer_Callback(void *argument);
+void Eint_CAN_Transmit_Timer_Callback(void *argument);
 
 bool BrakesEngagedCheck(uint8_t brake_pedal_position_percentage, uint8_t brakes_engaged_threshold_percentage);
 

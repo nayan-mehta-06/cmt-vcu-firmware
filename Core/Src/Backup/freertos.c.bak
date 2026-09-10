@@ -78,14 +78,14 @@ const osThreadAttr_t LogTaskStackUsage_attributes = {
 osThreadId_t CalibrateTaskHandle;
 const osThreadAttr_t CalibrateTask_attributes = {
   .name = "CalibrateTask",
-  .stack_size = 192 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for RTD_Task */
 osThreadId_t RTD_TaskHandle;
 const osThreadAttr_t RTD_Task_attributes = {
   .name = "RTD_Task",
-  .stack_size = 192 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for ProcessADC_Task */
@@ -99,14 +99,14 @@ const osThreadAttr_t ProcessADC_Task_attributes = {
 osThreadId_t PedalsDataTaskHandle;
 const osThreadAttr_t PedalsDataTask_attributes = {
   .name = "PedalsDataTask",
-  .stack_size = 192 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for VehicleCtrlTask */
 osThreadId_t VehicleCtrlTaskHandle;
 const osThreadAttr_t VehicleCtrlTask_attributes = {
   .name = "VehicleCtrlTask",
-  .stack_size = 192 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for StateCtrlTask */
@@ -134,14 +134,14 @@ const osThreadAttr_t HandleGUI_Task_attributes = {
 osThreadId_t LogVehicleData_TaskHandle;
 const osThreadAttr_t LogVehicleData_Task_attributes = {
   .name = "LogVehicleData_Task",
-  .stack_size = 192 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for VehicleFaultHandler_Task */
 osThreadId_t VehicleFaultHandler_TaskHandle;
 const osThreadAttr_t VehicleFaultHandler_Task_attributes = {
   .name = "VehicleFaultHandler_Task",
-  .stack_size = 192 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for StateTransitionQueue */
@@ -219,6 +219,21 @@ osTimerId_t CAN_2_Transmit_Timer_2Handle;
 const osTimerAttr_t CAN_2_Transmit_Timer_2_attributes = {
   .name = "CAN_2_Transmit_Timer_2"
 };
+/* Definitions for Eint_CAN_Transmit_Timer */
+osTimerId_t Eint_CAN_Transmit_TimerHandle;
+const osTimerAttr_t Eint_CAN_Transmit_Timer_attributes = {
+  .name = "Eint_CAN_Transmit_Timer"
+};
+/* Definitions for INV_1_Error_Reset_Timer */
+osTimerId_t INV_1_Error_Reset_TimerHandle;
+const osTimerAttr_t INV_1_Error_Reset_Timer_attributes = {
+  .name = "INV_1_Error_Reset_Timer"
+};
+/* Definitions for INV_2_Error_Reset_Timer */
+osTimerId_t INV_2_Error_Reset_TimerHandle;
+const osTimerAttr_t INV_2_Error_Reset_Timer_attributes = {
+  .name = "INV_2_Error_Reset_Timer"
+};
 /* Definitions for CAN1_Mutex */
 osMutexId_t CAN1_MutexHandle;
 const osMutexAttr_t CAN1_Mutex_attributes = {
@@ -263,6 +278,16 @@ const osMutexAttr_t PedalsFaults_Mutex_attributes = {
 osMutexId_t DataToLog_MutexHandle;
 const osMutexAttr_t DataToLog_Mutex_attributes = {
   .name = "DataToLog_Mutex"
+};
+/* Definitions for RawADC_Values_Mutex */
+osMutexId_t RawADC_Values_MutexHandle;
+const osMutexAttr_t RawADC_Values_Mutex_attributes = {
+  .name = "RawADC_Values_Mutex"
+};
+/* Definitions for EintData_Mutex */
+osMutexId_t EintData_MutexHandle;
+const osMutexAttr_t EintData_Mutex_attributes = {
+  .name = "EintData_Mutex"
 };
 /* Definitions for CalibrationDataReceived_Event */
 osEventFlagsId_t CalibrationDataReceived_EventHandle;
@@ -311,6 +336,9 @@ extern void APPS_2_OutOfRange_Timer_Callback(void *argument);
 extern void Screenshot_Timer_Callback(void *argument);
 extern void CAN_2_Transmit_Timer_1_Callback(void *argument);
 extern void CAN_2_Transmit_Timer_2_Callback(void *argument);
+extern void Eint_CAN_Transmit_Timer_Callback(void *argument);
+extern void INV_1_Error_Reset_Timer_Callback(void *argument);
+extern void INV_2_Error_Reset_Timer_Callback(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -363,6 +391,12 @@ void MX_FREERTOS_Init(void) {
   /* creation of DataToLog_Mutex */
   DataToLog_MutexHandle = osMutexNew(&DataToLog_Mutex_attributes);
 
+  /* creation of RawADC_Values_Mutex */
+  RawADC_Values_MutexHandle = osMutexNew(&RawADC_Values_Mutex_attributes);
+
+  /* creation of EintData_Mutex */
+  EintData_MutexHandle = osMutexNew(&EintData_Mutex_attributes);
+
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
@@ -401,6 +435,15 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of CAN_2_Transmit_Timer_2 */
   CAN_2_Transmit_Timer_2Handle = osTimerNew(CAN_2_Transmit_Timer_2_Callback, osTimerPeriodic, NULL, &CAN_2_Transmit_Timer_2_attributes);
+
+  /* creation of Eint_CAN_Transmit_Timer */
+  Eint_CAN_Transmit_TimerHandle = osTimerNew(Eint_CAN_Transmit_Timer_Callback, osTimerPeriodic, NULL, &Eint_CAN_Transmit_Timer_attributes);
+
+  /* creation of INV_1_Error_Reset_Timer */
+  INV_1_Error_Reset_TimerHandle = osTimerNew(INV_1_Error_Reset_Timer_Callback, osTimerOnce, NULL, &INV_1_Error_Reset_Timer_attributes);
+
+  /* creation of INV_2_Error_Reset_Timer */
+  INV_2_Error_Reset_TimerHandle = osTimerNew(INV_2_Error_Reset_Timer_Callback, osTimerOnce, NULL, &INV_2_Error_Reset_Timer_attributes);
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */

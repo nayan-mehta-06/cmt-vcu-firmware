@@ -64,24 +64,33 @@ bool transmit_inverter_command(InverterSetpoints_t *p_inverter_setpoints, uint8_
 
 	// Initialise buffer for CAN data
 	uint8_t txData[8] = {0};
-	uint16_t can_address = AMK_SEND_MSG_1 + inverter_node_number;
+	uint16_t can_address;
+
+	if (inverter_node_number == INVERTER_1_NODE_ADDRESS)
+
+	{
+		can_address = AMK_SEND_MSG_1 + inverter_node_number;
+	}
+	else
+	{
+		//can_address = 0x185;
+		can_address = AMK_SEND_MSG_1 + inverter_node_number;
+	}
 
 
-	//osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
 
-		txData[0] = (uint8_t)(p_inverter_setpoints_1 -> control & 0xFF);
-		txData[1] = (uint8_t)(p_inverter_setpoints_1 -> control >> 8);
+	// Litte-Endian Format
+	txData[0] = (uint8_t)(p_inverter_setpoints_1 -> control & 0xFF);
+	txData[1] = (uint8_t)(p_inverter_setpoints_1 -> control >> 8);
 
-		txData[2] = (uint8_t)(p_inverter_setpoints_1 -> torque_setpoint & 0xFF);
-		txData[3] = (uint8_t)(p_inverter_setpoints_1 -> torque_setpoint >> 8);
+	txData[2] = (uint8_t)(p_inverter_setpoints_1 -> torque_setpoint & 0xFF);
+	txData[3] = (uint8_t)(p_inverter_setpoints_1 -> torque_setpoint >> 8);
 
-		txData[4] = (uint8_t)(p_inverter_setpoints_1 -> torque_limit_positive & 0xFF);
-		txData[5] = (uint8_t)(p_inverter_setpoints_1 -> torque_limit_positive >> 8);
+	txData[4] = (uint8_t)(p_inverter_setpoints_1 -> torque_limit_positive & 0xFF);
+	txData[5] = (uint8_t)(p_inverter_setpoints_1 -> torque_limit_positive >> 8);
 
-		txData[6] = (uint8_t)(p_inverter_setpoints_1 -> torque_limit_negative & 0xFF);
-		txData[7] = (uint8_t)(p_inverter_setpoints_1 -> torque_limit_negative >> 8);
-
-    //osMutexRelease(InverterData1_MutexHandle);
+	txData[6] = (uint8_t)(p_inverter_setpoints_1 -> torque_limit_negative & 0xFF);
+	txData[7] = (uint8_t)(p_inverter_setpoints_1 -> torque_limit_negative >> 8);
 
 	if ( CAN_transmit(txData, EIGHT_BYTES, can_address, CAN_1, CAN_STD_ID_FORMAT) )
 	{

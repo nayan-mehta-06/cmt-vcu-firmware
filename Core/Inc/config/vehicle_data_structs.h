@@ -48,6 +48,9 @@ typedef struct VehicleState
 	bool button_toggled;
 	bool inverter_enabled;
 	bool brakes_engaged;
+	bool bse_fault;
+	bool cs_fault;
+	bool plausibility_fault;
 
 } VehicleState_t;
 
@@ -104,6 +107,17 @@ typedef struct PedalsFaults
 	bool screenshot;
 
 } PedalsFaults_t;
+
+/*
+ * Struct to hold the data sent to VCU by E-interface
+ * */
+typedef struct EintData
+{
+
+	uint8_t power_limit;
+	bool launch_control;
+
+} EintData_t;
 
 /*
  * Struct for testing all inputs/outputs of VCU
@@ -165,6 +179,9 @@ extern TestingVCU_t* p_testing_vcu_data;
 
 void initialise_pedals_faults(PedalsFaults_t* p_pedals_faults);
 extern PedalsFaults_t* p_pedals_faults;
+
+void initialise_eint_data(EintData_t* p_eint_data);
+extern EintData_t* p_eint_data;
 
 void initialise_freertos_task_stack_usage(FreertosTaskStackUsage_t* p_freertos_task_stack_usage);
 extern FreertosTaskStackUsage_t* p_freertos_task_stack_usage;

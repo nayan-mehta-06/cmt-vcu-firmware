@@ -70,11 +70,14 @@ PedalsState_t* p_pedals_state_data = &pedals_state_data;
 PedalsFaults_t pedals_faults_data;
 PedalsFaults_t* p_pedals_faults_data = &pedals_faults_data;
 
+EintData_t eint_data;
+EintData_t* p_eint_data = &eint_data;
+
 QueueErrors_t queue_errors_data;
 QueueErrors_t* p_queue_errors_data = &queue_errors_data;
 
-TestingVCU_t testing_vcu_data;
-TestingVCU_t* p_testing_vcu_data = &testing_vcu_data;
+// TestingVCU_t testing_vcu_data;
+// TestingVCU_t* p_testing_vcu_data = &testing_vcu_data;
 
 FreertosTaskStackUsage_t freertos_task_stack_usage;
 FreertosTaskStackUsage_t* p_freertos_task_stack_usage = &freertos_task_stack_usage;
@@ -181,8 +184,7 @@ int main(void)
   User_MX_CAN1_Init();
   User_MX_CAN2_Init();
 
-
-  system_state = STATE_IDLE;
+  system_state = STATE_IDLE;	// Initial state
 
   initialise_vehicle_state_data(p_vehicle_state_data);
 
@@ -199,9 +201,11 @@ int main(void)
 
   initialise_pedals_faults(p_pedals_faults_data);
 
+  initialise_eint_data(p_eint_data);
+
   initialise_queue_errors(p_queue_errors_data);
 
-  initialise_testing_VCU_data(p_testing_vcu_data);
+  // initialise_testing_VCU_data(p_testing_vcu_data);
 
   initialise_freertos_task_stack_usage(p_freertos_task_stack_usage);
 

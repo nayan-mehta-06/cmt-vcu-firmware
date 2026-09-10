@@ -37,7 +37,7 @@ typedef struct InverterDataToLog
 	int16_t temp_motor;
 	int16_t temp_inverter;
 	int16_t temp_IGBT;
-	int16_t torque_setpoint_percent;
+	int16_t torque_setpoint;
 	uint16_t diagnostic_number;
 
 } InverterDataToLog_t;
@@ -52,6 +52,7 @@ typedef struct DataToLog{
     PedalsState_t pedals_state;
     uint8_t vehicle_state;
     uint8_t pc_complete;
+    uint8_t inverter_reset_flags;
 } DataToLog_t;
 
 extern DataToLog_t* p_data_to_log;

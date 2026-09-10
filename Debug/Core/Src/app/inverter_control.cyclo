@@ -1,4 +1,4 @@
 ../Core/Src/app/inverter_control.c:23:6:setInverterData1	1
 ../Core/Src/app/inverter_control.c:37:6:processInverterStatus	1
 ../Core/Src/app/inverter_control.c:49:6:setInverterData2	1
-../Core/Src/app/inverter_control.c:61:6:transmit_inverter_command	2
+../Core/Src/app/inverter_control.c:61:6:transmit_inverter_command	3

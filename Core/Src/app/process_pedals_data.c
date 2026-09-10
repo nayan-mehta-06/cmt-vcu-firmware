@@ -61,7 +61,7 @@ void Task_Process_Pedals_Data(void *argument)
 	osDelay(1000); // Delay to try prevent EEPROM read errors
 
 	// Stop task switching while the task tries to read the EEPROM
-	vTaskSuspendAll();
+	//vTaskSuspendAll();
 
 	/*
 	 * Try to read the EEPROM a max of 10 times to get calibration data
@@ -73,7 +73,7 @@ void Task_Process_Pedals_Data(void *argument)
 	    osDelay(100);
 	} while (status != HAL_OK && retries < MAX_RETRIES);
 
-	xTaskResumeAll();
+	//xTaskResumeAll();
 
 	apps_1_min = (accelerator_pedal_calibration_values[0] + (accelerator_pedal_calibration_values[1] * 256));
 	apps_1_max = (accelerator_pedal_calibration_values[2] + (accelerator_pedal_calibration_values[3] * 256));
@@ -82,6 +82,14 @@ void Task_Process_Pedals_Data(void *argument)
 
 	bse_min = (brake_pedal_calibration_values[0] + (brake_pedal_calibration_values[1] * 256));
 	bse_max = (brake_pedal_calibration_values[2] + (brake_pedal_calibration_values[3] * 256));
+
+	apps_1_min = 30;
+	apps_2_min = 30;
+	apps_1_max = 3050;
+	apps_2_max = 4070;
+
+	bse_min = 600;
+	bse_max = 3300;
 
   /* Infinite loop */
   for(;;)
@@ -201,16 +209,14 @@ void Task_Process_Pedals_Data(void *argument)
 
 		  brake_pedal_percentage = calc_adc_percentage(pedals_adc_data.bse_adc, bse_min, bse_max);
 
-		  if (current_state != STATE_CALIBRATION)
-		  {
-			  current_pedals_faults.apps_implausibility = APPS_Implausibility_Check(apps_1_percentage,
-			  		  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	apps_2_percentage);
 
-			  current_pedals_faults.screenshot = Screenshot_Check(apps_1_percentage, apps_2_percentage,
-					  	  	  	  	  	  	  	  	  	  	  	   brake_pedal_percentage,
-																   BRAKES_ENGAGED_THRESHOLD_PERCENTAGE,
-																   current_pedals_faults.screenshot);
-		  }
+		  current_pedals_faults.apps_implausibility = APPS_Implausibility_Check(apps_1_percentage,
+																				apps_2_percentage);
+
+		  current_pedals_faults.screenshot = Screenshot_Check(apps_1_percentage, apps_2_percentage,
+															   brake_pedal_percentage,
+															   BRAKES_ENGAGED_THRESHOLD_PERCENTAGE,
+															   current_pedals_faults.screenshot);
 
 
 		  if (current_pedals_faults.apps_implausibility == TRUE
@@ -359,15 +365,10 @@ void Screenshot_Timer_Callback(void *argument)
 
 uint8_t calc_adc_percentage(uint16_t val, uint16_t min, uint16_t max)
 {
-	if (val <= min) return 0;
-
-	if (val >= max) return 100;
-
-	// Typecasting to a uint32_t is done to prevent data loss when multiplying by 100
-	return (uint8_t)(
-			((uint32_t)(val - min) * 100U) /
-				(max - min)
-			);
+    if (max <= min) return 0;   // invalid calibration range
+    if (val <= min) return 0;
+    if (val >= max) return 100;
+    return (uint8_t)(((uint32_t)(val - min) * 100U) / (max - min));
 }
 
 

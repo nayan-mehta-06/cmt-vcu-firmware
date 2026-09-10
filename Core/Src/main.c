@@ -70,6 +70,9 @@ PedalsState_t* p_pedals_state_data = &pedals_state_data;
 PedalsFaults_t pedals_faults_data;
 PedalsFaults_t* p_pedals_faults_data = &pedals_faults_data;
 
+EintData_t eint_data;
+EintData_t* p_eint_data = &eint_data;
+
 QueueErrors_t queue_errors_data;
 QueueErrors_t* p_queue_errors_data = &queue_errors_data;
 
@@ -198,6 +201,8 @@ int main(void)
 
   initialise_pedals_faults(p_pedals_faults_data);
 
+  initialise_eint_data(p_eint_data);
+
   initialise_queue_errors(p_queue_errors_data);
 
   // initialise_testing_VCU_data(p_testing_vcu_data);
@@ -243,13 +248,12 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 180;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 25;
+  RCC_OscInitStruct.PLL.PLLN = 360;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)

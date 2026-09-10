@@ -92,6 +92,10 @@ void Task_State_Ctrl(void *argument)
 					  system_state = STATE_IDLE;
 				  }
 				  break;
+
+			  default:
+			      system_state = STATE_FAULTED;   // fail safe
+			      break;
 		  }
 	  osMutexRelease(SystemState_MutexHandle);
 

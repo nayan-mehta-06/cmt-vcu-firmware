@@ -14,10 +14,25 @@
 
 extern InverterSetpoints_t* p_inverter_setpoints_1;
 
+#define AMK_STATUS_RESERVE 0
+#define AMK_STATUS_SYSTEM_READY 8
+#define AMK_STATUS_ERROR 9
+#define AMK_STATUS_WARN 10
+#define AMK_STATUS_QUIT_DC_ON 11
+#define AMK_STATUS_DC_ON 12
+#define AMK_STATUS_QUIT_INVERTER_ON 13
+#define AMK_STATUS_INVERTER_ON 14
+#define AMK_STATUS_DERATING 15
+
+#define AMK_CONTROL_RESERVE 0
+#define AMK_CONTROL_INVERTER_ON 8
+#define AMK_CONTROL_DC_ON 9
+#define AMK_CONTROL_ENABLE 10
+#define AMK_CONTROL_ERROR_RESET 11
+#define AMK_CONTROL_RESERVE_2 12
 
 // Bit masks used to check which status codes the inverters have sent to VCU,
 // 		allows for easier debugging with the InverterStatus_t struct
-
 #define AMK_STATUS_SYSTEM_READY_MASK       	(1U << AMK_STATUS_SYSTEM_READY)
 #define AMK_STATUS_ERROR_ACTIVE_MASK        (1U << AMK_STATUS_ERROR)
 #define AMK_STATUS_WARNING_ACTIVE_MASK      (1U << AMK_STATUS_WARN)
@@ -26,6 +41,7 @@ extern InverterSetpoints_t* p_inverter_setpoints_1;
 #define AMK_STATUS_QUIT_INVERTER_ON_MASK    (1U << AMK_STATUS_QUIT_INVERTER_ON)
 #define AMK_STATUS_INVERTER_ON_MASK         (1U << AMK_STATUS_INVERTER_ON)
 #define AMK_STATUS_DERATING_ACTIVE_MASK     (1U << AMK_STATUS_DERATING)
+
 
 void setInverterData1(InverterData_t *inv_data, uint8_t *data);
 void processInverterStatus(InverterStatus_t *inv_status, uint16_t status);

@@ -116,46 +116,11 @@ void Error_Handler(void);
 #define CS_Fault_IN_GPIO_Port GPIOG
 
 /* USER CODE BEGIN Private defines */
-#define EVT_INVERTER_ENABLED   (1 << 0)
-#define EVT_INVERTER_DISABLED  (1 << 1)
-
 #define CAN_1 1
 #define CAN_2 2
 
 #define CAN_STD_ID_FORMAT 0
 #define CAN_EXT_ID_FORMAT 1
-
-#define AMK_STATUS_RESERVE 0
-#define AMK_STATUS_SYSTEM_READY 8
-#define AMK_STATUS_ERROR 9
-#define AMK_STATUS_WARN 10
-#define AMK_STATUS_QUIT_DC_ON 11
-#define AMK_STATUS_DC_ON 12
-#define AMK_STATUS_QUIT_INVERTER_ON 13
-#define AMK_STATUS_INVERTER_ON 14
-#define AMK_STATUS_DERATING 15
-
-#define AMK_CONTROL_RESERVE 0
-#define AMK_CONTROL_INVERTER_ON 8
-#define AMK_CONTROL_DC_ON 9
-#define AMK_CONTROL_ENABLE 10
-#define AMK_CONTROL_ERROR_RESET 11
-#define AMK_CONTROL_RESERVE_2 12
-
-#define AMK_ID110 10
-
-#define MAX_RPM 30000
-#define MAX_RPM_NO_FIELD_WEAKENING 20000
-#define MMAX_MN_RATIO 2.1
-
-#define POS_VELOCITY_LIM 1000
-#define NEG_VELOCITY_LIM -100
-
-#define POS_TORQUE_LIM 100
-#define NEG_TORQUE_LIM 0
-
-/* #define MAX_SPEED 1500 */
-
 
 #define QUEUE_MESSAGE_PRIORITY 0
 
@@ -163,14 +128,10 @@ void Error_Handler(void);
 #define ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS pdMS_TO_TICKS(10)
 // Try reduce to 10Hz for traction control
 
-
-#define ADC_INDEX_USED 2
 #define ADC_BUFFER_LENGTH 8
 #define MAX_ADC_VALUE 4096
 
 extern uint16_t raw_ADC_values[ADC_BUFFER_LENGTH];
-
-#define PRECHARGE_PERCENTAGE 90
 
 // Define commands for checking status of inputs
 #define CHECK_RTD_BUTTON_STATUS() HAL_GPIO_ReadPin(RTD_Button_Status_IN_GPIO_Port, RTD_Button_Status_IN_Pin)
@@ -191,6 +152,18 @@ extern uint16_t raw_ADC_values[ADC_BUFFER_LENGTH];
 
 #define BRAKE_LIGHT_ON() HAL_GPIO_WritePin(Brake_Light_Enable_GPIO_Port, Brake_Light_Enable_Pin, GPIO_PIN_SET)
 #define BRAKE_LIGHT_OFF() HAL_GPIO_WritePin(Brake_Light_Enable_GPIO_Port, Brake_Light_Enable_Pin, GPIO_PIN_RESET)
+
+#define SPARE_5V_OUT_ON()   HAL_GPIO_WritePin(Spare_5V_OUT_GPIO_Port, Spare_5V_OUT_Pin, GPIO_PIN_SET)
+#define SPARE_5V_OUT_OFF()  HAL_GPIO_WritePin(Spare_5V_OUT_GPIO_Port, Spare_5V_OUT_Pin, GPIO_PIN_RESET)
+
+#define SPARE_24V_OUT_ON()  HAL_GPIO_WritePin(Spare_24V_Out_GPIO_Port, Spare_24V_Out_Pin, GPIO_PIN_SET)
+#define SPARE_24V_OUT_OFF() HAL_GPIO_WritePin(Spare_24V_Out_GPIO_Port, Spare_24V_Out_Pin, GPIO_PIN_RESET)
+
+#define CHECK_AIR_STATUS()  HAL_GPIO_ReadPin(AIR__IN_GPIO_Port, AIR__IN_Pin)
+
+#define CHECK_BSE_FAULT_STATUS() HAL_GPIO_ReadPin(BSE_Fault_IN_GPIO_Port, BSE_Fault_IN_Pin)
+#define CHECK_PLAUSIBILITY_FAULT_STATUS() HAL_GPIO_ReadPin(Plausibility_Fault_IN_GPIO_Port, Plausibility_Fault_IN_Pin)
+#define CHECK_CS_FAULT_STATUS() HAL_GPIO_ReadPin(CS_Fault_IN_GPIO_Port, CS_Fault_IN_Pin)
 
 /* USER CODE END Private defines */
 

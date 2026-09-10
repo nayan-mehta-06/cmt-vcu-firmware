@@ -72,20 +72,20 @@ void Task_Process_CAN_Msgs(void *argument)
 				  break;
 
 				  case (AMK_RECEIVE_MSG_1+INVERTER_2_NODE_ADDRESS):
-					osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
+					osMutexAcquire(InverterData2_MutexHandle, osWaitForever);
 
 				  	  setInverterData1(p_inverter_data_2, msg.data);
 					  processInverterStatus(p_inverter_status_2, p_inverter_data_2->status);
 
-					osMutexRelease(InverterData1_MutexHandle);
+					osMutexRelease(InverterData2_MutexHandle);
 				  break;
 
 				  case (AMK_RECEIVE_MSG_2+INVERTER_1_NODE_ADDRESS):
-					osMutexAcquire(InverterData2_MutexHandle, osWaitForever);
+					osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
 
 				  	  	  setInverterData2(p_inverter_data_1, msg.data);
 
-					osMutexRelease(InverterData2_MutexHandle);
+					osMutexRelease(InverterData1_MutexHandle);
 				  break;
 
 				  case (AMK_RECEIVE_MSG_2+INVERTER_2_NODE_ADDRESS):
@@ -94,6 +94,22 @@ void Task_Process_CAN_Msgs(void *argument)
 				  	  	  setInverterData2(p_inverter_data_2, msg.data);
 
 					osMutexRelease(InverterData2_MutexHandle);
+				  break;
+
+				  case (EINT_ID):
+				    osMutexAcquire(EintData_MutexHandle, osWaitForever);
+
+				  	  p_eint_data->power_limit = msg.data[0];
+				  	  if (msg.data[3] == 0xFF)
+				  	  {
+				  		  p_eint_data->launch_control = true;
+				  	  }
+				  	  else
+				  	  {
+				  		  p_eint_data->launch_control = false;
+				  	  }
+
+				    osMutexRelease(EintData_MutexHandle);
 				  break;
 			  }
 		  }

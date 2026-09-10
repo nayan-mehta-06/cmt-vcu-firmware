@@ -39,7 +39,7 @@ void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 3;
+  hcan1.Init.Prescaler = 6;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_2TQ;
   hcan1.Init.TimeSeg1 = CAN_BS1_12TQ;
@@ -71,10 +71,10 @@ void MX_CAN2_Init(void)
 
   /* USER CODE END CAN2_Init 1 */
   hcan2.Instance = CAN2;
-  hcan2.Init.Prescaler = 5;
+  hcan2.Init.Prescaler = 6;
   hcan2.Init.Mode = CAN_MODE_NORMAL;
   hcan2.Init.SyncJumpWidth = CAN_SJW_2TQ;
-  hcan2.Init.TimeSeg1 = CAN_BS1_15TQ;
+  hcan2.Init.TimeSeg1 = CAN_BS1_12TQ;
   hcan2.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan2.Init.TimeTriggeredMode = DISABLE;
   hcan2.Init.AutoBusOff = ENABLE;
@@ -116,14 +116,14 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
     */
     GPIO_InitStruct.Pin = GPIO_PIN_0;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = GPIO_PIN_1;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
@@ -152,9 +152,16 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
     PB5     ------> CAN2_RX
     PB6     ------> CAN2_TX
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6;
+    GPIO_InitStruct.Pin = GPIO_PIN_5;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF9_CAN2;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF9_CAN2;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -227,10 +234,10 @@ void User_MX_CAN1_Init(void)
 
 	/*** BMS CAN FILTER MASK ***/
 
-	CAN_FilterTypeDef  sFilterConfig;
+	CAN_FilterTypeDef sFilterConfig;
 
 	/* Configure the CAN Filter */
-	sFilterConfig.FilterBank = 0;	//========== CRITICAL ==========// // This says we're current configuring filter #1 for CAN1
+	sFilterConfig.FilterBank = 0;	//========== CRITICAL ==========//
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
 	sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
 	sFilterConfig.FilterIdHigh = BMS_ID<<5;
@@ -251,10 +258,10 @@ void User_MX_CAN1_Init(void)
 
 	/*** IVTS CAN FILTER MASK ***/
 
-	CAN_FilterTypeDef  sFilterConfig1;
+	CAN_FilterTypeDef sFilterConfig1;
 
 	/* Configure the CAN Filter */
-	sFilterConfig1.FilterBank = 1;	//========== CRITICAL ==========// // This says we're current configuring filter #1 for CAN1
+	sFilterConfig1.FilterBank = 1;	//========== CRITICAL ==========//
 	sFilterConfig1.FilterMode = CAN_FILTERMODE_IDLIST;
 	sFilterConfig1.FilterScale = CAN_FILTERSCALE_32BIT;
 	sFilterConfig1.FilterIdHigh = IVTS_U1<<5;
@@ -274,10 +281,10 @@ void User_MX_CAN1_Init(void)
 
 	/*** INVERTER 1 CAN FILTER MASK ***/
 
-	CAN_FilterTypeDef  sFilterConfig2;
+	CAN_FilterTypeDef sFilterConfig2;
 
 	/* Configure the CAN Filter */
-	sFilterConfig2.FilterBank = 2;	//========== CRITICAL ==========// // This says we're current configuring filter #2 for CAN1
+	sFilterConfig2.FilterBank = 2;	//========== CRITICAL ==========//
 	sFilterConfig2.FilterMode = CAN_FILTERMODE_IDLIST;
 	sFilterConfig2.FilterScale = CAN_FILTERSCALE_32BIT;
 	sFilterConfig2.FilterIdHigh = (AMK_RECEIVE_MSG_1+INVERTER_1_NODE_ADDRESS)<<5;
@@ -297,10 +304,10 @@ void User_MX_CAN1_Init(void)
 
 	/*** INVERTER 2 CAN FILTER MASK ***/
 
-	CAN_FilterTypeDef  sFilterConfig3;
+	CAN_FilterTypeDef sFilterConfig3;
 
 	/* Configure the CAN Filter */
-	sFilterConfig3.FilterBank = 3;	//========== CRITICAL ==========// // This says we're current configuring filter #2 for CAN1
+	sFilterConfig3.FilterBank = 3;	//========== CRITICAL ==========//
 	sFilterConfig3.FilterMode = CAN_FILTERMODE_IDLIST;
 	sFilterConfig3.FilterScale = CAN_FILTERSCALE_32BIT;
 	sFilterConfig3.FilterIdHigh = (AMK_RECEIVE_MSG_1+INVERTER_2_NODE_ADDRESS)<<5;
@@ -312,6 +319,30 @@ void User_MX_CAN1_Init(void)
 
 
 	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig3) != HAL_OK)
+	{
+
+		/* Filter configuration Error */
+		Error_Handler();
+
+	}
+
+	/*** EINT CAN FILTER MASK ***/
+
+	CAN_FilterTypeDef sFilterConfig4;
+
+	/* Configure the CAN Filter */
+	sFilterConfig4.FilterBank = 4;	//========== CRITICAL ==========//
+	sFilterConfig4.FilterMode = CAN_FILTERMODE_IDMASK;
+	sFilterConfig4.FilterScale = CAN_FILTERSCALE_32BIT;
+	sFilterConfig4.FilterIdHigh = EINT_ID<<5;
+	sFilterConfig4.FilterIdLow = 0x0000;
+	sFilterConfig4.FilterMaskIdHigh = 0x7FF<<5;
+	sFilterConfig4.FilterMaskIdLow = 0x0000;
+	sFilterConfig4.FilterFIFOAssignment = CAN_RX_FIFO0; //========== CRITICAL ==========//
+	sFilterConfig4.FilterActivation = ENABLE;
+	sFilterConfig4.SlaveStartFilterBank = 14; //========== CRITICAL ==========//		// This setting tells where CAN2 filters are positioned
+
+	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig4) != HAL_OK)
 	{
 
 		/* Filter configuration Error */

@@ -24,6 +24,9 @@ void initialise_vehicle_state_data(VehicleState_t* p_vehicle_state)
 	p_vehicle_state->button_toggled = false;
 	p_vehicle_state->inverter_enabled = false;
 	p_vehicle_state->brakes_engaged = false;
+	p_vehicle_state->bse_fault = false;
+	p_vehicle_state->cs_fault = false;
+	p_vehicle_state->plausibility_fault = false;
 }
 
 void initialise_queue_errors(QueueErrors_t* p_queue_errors)
@@ -50,6 +53,12 @@ void initialise_pedals_faults(PedalsFaults_t* p_pedals_faults)
 	p_pedals_faults->bse_status = NORMAL;
 	p_pedals_faults->apps_implausibility = NORMAL;
 	p_pedals_faults->screenshot = false;
+}
+
+void initialise_eint_data(EintData_t* p_eint_data)
+{
+	p_eint_data->power_limit = 0;
+	p_eint_data->launch_control = false;
 }
 
 void initialise_testing_VCU_data(TestingVCU_t* testing_VCU_data)

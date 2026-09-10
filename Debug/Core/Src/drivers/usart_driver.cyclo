@@ -1,1 +1,5 @@
-../Core/Src/drivers/usart_driver.c:12:6:UART_Transmit	1
+../Core/Src/drivers/usart_driver.c:14:6:UART_Transmit	1
+../Core/Src/drivers/usart_driver.c:19:6:UART_Print	1
+../Core/Src/drivers/usart_driver.c:24:6:UART_Print_Hex	1
+../Core/Src/drivers/usart_driver.c:31:6:UART_Print_Dec	1
+../Core/Src/drivers/usart_driver.c:38:6:UART_Print_Uint	1

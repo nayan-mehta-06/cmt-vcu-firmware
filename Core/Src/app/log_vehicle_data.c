@@ -19,6 +19,7 @@
 #include "cmt_utils.h"
 #include "app/app_freertos.h"
 #include "app/state_control.h"
+#include "app/inverter_control.h"
 #include "drivers/can_driver.h"
 #include "config/can_ids.h"
 
@@ -29,6 +30,8 @@ void Task_LogVehicleData(void *argument)
 
 	InverterDataToLog_t inv_1_data_to_log;
 	InverterDataToLog_t inv_2_data_to_log;
+
+	uint8_t inverter_reset_flags_to_log;
 
 	uint8_t pedals_faults_flags_to_log;
 	uint8_t apps_implausibility_flags_to_log;
@@ -56,16 +59,28 @@ void Task_LogVehicleData(void *argument)
 
 		  Convert_ADCs(&converted_adcs_to_log, adcs_to_log);
 
+		  inverter_reset_flags_to_log = 0; // Clear existing bits
+
 		  osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
 			  Get_Inverter_Data_To_Log(&inv_1_data_to_log,
 					  	  	  	  	   p_inverter_data_1,
 									   p_inverter_setpoints_1);
+
+			  if ((p_inverter_setpoints_1->control & (1 << AMK_CONTROL_ERROR_RESET)) != 0)
+			  {
+				  inverter_reset_flags_to_log |= (1 << 0);
+			  }
 		  osMutexRelease(InverterData1_MutexHandle);
 
 		  osMutexAcquire(InverterData2_MutexHandle, osWaitForever);
 			  Get_Inverter_Data_To_Log(&inv_2_data_to_log,
 					  	  	  	  	   p_inverter_data_2,
 									   p_inverter_setpoints_2);
+
+			  if ((p_inverter_setpoints_2->control & (1 << AMK_CONTROL_ERROR_RESET)) != 0)
+			  {
+				  inverter_reset_flags_to_log |= (1 << 1);
+			  }
 		  osMutexRelease(InverterData2_MutexHandle);
 
 		  /* The event flags can be directly logged as all event bits fit into the 8 bits of the flag
@@ -98,6 +113,7 @@ void Task_LogVehicleData(void *argument)
 			p_data_to_log->pedals_state               = pedals_state_to_log;
 			p_data_to_log->vehicle_state              = vehicle_state_to_log;
 			p_data_to_log->pc_complete                = pc_complete_to_log;
+			p_data_to_log->inverter_reset_flags		  = inverter_reset_flags_to_log;
 		osMutexRelease(DataToLog_MutexHandle);
 
 		osDelay(1);
@@ -146,7 +162,9 @@ void CAN_2_Transmit_Timer_1_Callback(void *argument)
 	can_data[1] = (all_data_to_log.converted_adcs.spare_adc >> 8) & 0xFF;
 	can_data[2] = (all_data_to_log.converted_adcs.spare_adc & 0xFF);
 
-	CAN_transmit(can_data, THREE_BYTES, CAN_2_VCU_DATA_3, CAN_2, CAN_STD_ID_FORMAT);
+	can_data[3] = all_data_to_log.inverter_reset_flags;
+
+	CAN_transmit(can_data, FOUR_BYTES, CAN_2_VCU_DATA_3, CAN_2, CAN_STD_ID_FORMAT);
 
 }
 
@@ -183,8 +201,8 @@ void CAN_2_Transmit_Timer_2_Callback(void *argument)
 		can_data[4] = (inv_datas[i]->magnetizing_current_A >> 8) & 0xFF;
 		can_data[5] = (inv_datas[i]->magnetizing_current_A & 0xFF);
 
-		can_data[6] = (inv_datas[i]->torque_setpoint_percent >> 8) & 0xFF;
-		can_data[7] = (inv_datas[i]->torque_setpoint_percent & 0xFF);
+		can_data[6] = (inv_datas[i]->torque_setpoint >> 8) & 0xFF;
+		can_data[7] = (inv_datas[i]->torque_setpoint & 0xFF);
 
 		CAN_transmit(can_data, EIGHT_BYTES, can_id, CAN_2, CAN_STD_ID_FORMAT);
 
@@ -291,7 +309,7 @@ void Get_Inverter_Data_To_Log(InverterDataToLog_t* inv_data_to_log,
 	inv_data_to_log->temp_motor					= inv_data->temp_motor;
 	inv_data_to_log->temp_inverter 				= inv_data->temp_inverter;
 	inv_data_to_log->temp_IGBT 					= inv_data->temp_IGBT;
-	inv_data_to_log->torque_setpoint_percent 	= inv_setpoints->torque_setpoint;
+	inv_data_to_log->torque_setpoint		 	= inv_setpoints->torque_setpoint;
 	inv_data_to_log->diagnostic_number 			= inv_data->diagnostic_number;
 }
 

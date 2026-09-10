@@ -47,7 +47,8 @@ Core/Src/app/RTD.o: ../Core/Src/app/RTD.c ../Core/Inc/app/RTD.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Core/Inc/config/amk_data_structs.h ../Core/Inc/config/vcu_config.h \
- ../Core/Inc/cmt_utils.h ../Core/Inc/app/app_freertos.h
+ ../Core/Inc/cmt_utils.h ../Core/Inc/app/app_freertos.h \
+ ../Core/Inc/app/inverter_control.h
 ../Core/Inc/app/RTD.h:
 ../Core/Inc/config/vehicle_data_structs.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
@@ -101,3 +102,4 @@ Core/Src/app/RTD.o: ../Core/Src/app/RTD.c ../Core/Inc/app/RTD.h \
 ../Core/Inc/config/vcu_config.h:
 ../Core/Inc/cmt_utils.h:
 ../Core/Inc/app/app_freertos.h:
+../Core/Inc/app/inverter_control.h:

@@ -1,3 +1,3 @@
-../Core/Src/freertos.c:326:6:vApplicationStackOverflowHook	1
-../Core/Src/freertos.c:339:6:MX_FREERTOS_Init	1
-../Core/Src/freertos.c:500:6:Task_LogTaskStackUsage	1
+../Core/Src/freertos.c:349:6:vApplicationStackOverflowHook	1
+../Core/Src/freertos.c:362:6:MX_FREERTOS_Init	1
+../Core/Src/freertos.c:535:6:Task_LogTaskStackUsage	1
