@@ -1,6 +1,6 @@
 ../Core/Src/app/vehicle_control.c:29:6:Task_Vehicle_Ctrl	24	static
-../Core/Src/app/vehicle_control.c:166:6:InverterCAN_Transmit_Callback	32	static
-../Core/Src/app/vehicle_control.c:185:6:INV_1_Error_Reset_Timer_Callback	16	static
-../Core/Src/app/vehicle_control.c:190:6:INV_2_Error_Reset_Timer_Callback	16	static
-../Core/Src/app/vehicle_control.c:195:6:Eint_CAN_Transmit_Timer_Callback	16	static
-../Core/Src/app/vehicle_control.c:200:6:BrakesEngagedCheck	24	static
+../Core/Src/app/vehicle_control.c:169:6:InverterCAN_Transmit_Callback	32	static
+../Core/Src/app/vehicle_control.c:188:6:INV_1_Error_Reset_Timer_Callback	16	static
+../Core/Src/app/vehicle_control.c:193:6:INV_2_Error_Reset_Timer_Callback	16	static
+../Core/Src/app/vehicle_control.c:198:6:Eint_CAN_Transmit_Timer_Callback	16	static
+../Core/Src/app/vehicle_control.c:203:6:BrakesEngagedCheck	24	static

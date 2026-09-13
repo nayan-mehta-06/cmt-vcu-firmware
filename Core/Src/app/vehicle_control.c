@@ -72,7 +72,10 @@ void Task_Vehicle_Ctrl(void *argument)
 	  /* Torque is a function of how much the pedal is pressed, 100% pedal press
 	   * means you request 100% of the allowed torque
 	   */
-	  torque_setpoint = (int16_t)(accel_pedal_percentage * 10.0f);
+
+
+
+	  torque_setpoint = (int16_t)(accel_pedal_percentage * 10.0f * (MAX_TORQUE_PERCENTAGE/100));
 
 	  osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
 	  osMutexAcquire(InverterData2_MutexHandle, osWaitForever);
