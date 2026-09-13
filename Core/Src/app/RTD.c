@@ -39,9 +39,13 @@ void Task_RTD(void *argument)
 
 	INVERTER_DISABLE();
 
+	osDelay(2000);
+
   /* Infinite loop */
   for(;;)
   {
+
+	  PRECHARGE_SIGNAL_ENABLE();
 
 	  bool button_current = CHECK_RTD_BUTTON_STATUS();
 	  bool rtd_button_pressed = button_current && !button_last_state;
@@ -79,20 +83,16 @@ void Task_RTD(void *argument)
 		   *
 		   * Request to enter calibration is sent after the button is pressed for CALIBRATION_ENABLE_PERIOD_MILLISECONDS
 		   */
-		  if (rtd_button_pressed && !p_inverter_status_1->quit_inverter_on) {
-			  if (!rtd_button_was_pressed) {
-				  rtd_button_was_pressed = true;
-				  button_start_tick = xTaskGetTickCount();
-			  }
-
-			  if (xTaskGetTickCount() - button_start_tick >= CALIBRATION_ENABLE_PERIOD_MILLISECONDS)
-			  {
-				  enable_calibration = true;
-			  }
-		  }
-		  else
-		  {
-			  rtd_button_was_pressed = false;
+		  if (button_current && !p_inverter_status_1->quit_inverter_on) {
+		      if (!rtd_button_was_pressed) {
+		          rtd_button_was_pressed = true;
+		          button_start_tick = xTaskGetTickCount();
+		      }
+		      if (xTaskGetTickCount() - button_start_tick >= CALIBRATION_ENABLE_PERIOD_MILLISECONDS) {
+		          enable_calibration = true;
+		      }
+		  } else {
+		      rtd_button_was_pressed = false;
 		  }
 	  }
 
@@ -127,7 +127,7 @@ void Task_RTD(void *argument)
 		      inverter_voltage_percentage = 0;
 		  }
 
-		  if (inverter_voltage_percentage >= PRECHARGE_PERCENTAGE && p_vehicle_state_data->inverter_voltage > 40)
+		  if (inverter_voltage_percentage >= PRECHARGE_PERCENTAGE && p_vehicle_state_data->inverter_voltage > 440)
 		  {
 			  p_vehicle_state_data -> precharge_voltage_met = true;
 		  }
@@ -137,9 +137,10 @@ void Task_RTD(void *argument)
 		  }
 
 
-		  if (p_vehicle_state_data -> precharge_voltage_met
-		  	  && p_inverter_status_1->system_ready
-		  	  && p_inverter_status_2->system_ready)
+		  /*
+		  if (p_vehicle_state_data -> precharge_voltage_met)
+		  	  //&& p_inverter_status_1->system_ready
+		  	  //&& p_inverter_status_2->system_ready)
 		  {
 			  PRECHARGE_SIGNAL_ENABLE();
 			  p_vehicle_state_data -> precharge_signal_sent = true;
@@ -151,8 +152,10 @@ void Task_RTD(void *argument)
 			  p_vehicle_state_data -> precharge_signal_sent = false;
 			  //p_vehicle_state_data -> precharge_complete = false;
 		  }
+		  */
 
 
+		  p_vehicle_state_data->precharge_signal_sent = true;
 		  precharge_complete_received = CHECK_PRECHARGE_COMPLETE_STATUS();
 
 		  //PRECHARGE_SIGNAL_ENABLE();

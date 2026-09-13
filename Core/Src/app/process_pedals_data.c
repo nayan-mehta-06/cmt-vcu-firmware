@@ -83,13 +83,13 @@ void Task_Process_Pedals_Data(void *argument)
 	bse_min = (brake_pedal_calibration_values[0] + (brake_pedal_calibration_values[1] * 256));
 	bse_max = (brake_pedal_calibration_values[2] + (brake_pedal_calibration_values[3] * 256));
 
-	apps_1_min = 30;
-	apps_2_min = 30;
-	apps_1_max = 3050;
-	apps_2_max = 4070;
+	apps_1_min = 810;
+	apps_2_min = 760;
+	apps_1_max = 2050;
+	apps_2_max = 2490;
 
-	bse_min = 600;
-	bse_max = 3300;
+	bse_min = 385;
+	bse_max = 1050;
 
   /* Infinite loop */
   for(;;)
