@@ -12,7 +12,7 @@
 
 #include "config/vehicle_data_structs.h"
 
-#define USE_INTEGRATION_THRESHOLDS // Prevents faulting on integration board
+//#define USE_INTEGRATION_THRESHOLDS // Prevents faulting on integration board
 
 #ifdef USE_INTEGRATION_THRESHOLDS
 
@@ -31,11 +31,11 @@
 
 // APPS1 - 90 degree sensor
 #define APPS_1_OPEN_CIRCUIT_FAULT_THRESHOLD  3000
-#define APPS_1_SHORT_CIRCUIT_FAULT_THRESHOLD 500
+#define APPS_1_SHORT_CIRCUIT_FAULT_THRESHOLD 400
 
 // APPS2 - 45 degree sensor
 #define APPS_2_OPEN_CIRCUIT_FAULT_THRESHOLD  4000
-#define APPS_2_SHORT_CIRCUIT_FAULT_THRESHOLD 1200
+#define APPS_2_SHORT_CIRCUIT_FAULT_THRESHOLD 400
 
 #define BSE_OPEN_CIRCUIT_FAULT_THRESHOLD     4000
 #define BSE_SHORT_CIRCUIT_FAULT_THRESHOLD    90

@@ -234,6 +234,11 @@ osTimerId_t INV_2_Error_Reset_TimerHandle;
 const osTimerAttr_t INV_2_Error_Reset_Timer_attributes = {
   .name = "INV_2_Error_Reset_Timer"
 };
+/* Definitions for Precharge_Complete_Timer */
+osTimerId_t Precharge_Complete_TimerHandle;
+const osTimerAttr_t Precharge_Complete_Timer_attributes = {
+  .name = "Precharge_Complete_Timer"
+};
 /* Definitions for CAN1_Mutex */
 osMutexId_t CAN1_MutexHandle;
 const osMutexAttr_t CAN1_Mutex_attributes = {
@@ -339,6 +344,7 @@ extern void CAN_2_Transmit_Timer_2_Callback(void *argument);
 extern void Eint_CAN_Transmit_Timer_Callback(void *argument);
 extern void INV_1_Error_Reset_Timer_Callback(void *argument);
 extern void INV_2_Error_Reset_Timer_Callback(void *argument);
+extern void Precharge_Complete_Timer_Callback(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -444,6 +450,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of INV_2_Error_Reset_Timer */
   INV_2_Error_Reset_TimerHandle = osTimerNew(INV_2_Error_Reset_Timer_Callback, osTimerOnce, NULL, &INV_2_Error_Reset_Timer_attributes);
+
+  /* creation of Precharge_Complete_Timer */
+  Precharge_Complete_TimerHandle = osTimerNew(Precharge_Complete_Timer_Callback, osTimerOnce, NULL, &Precharge_Complete_Timer_attributes);
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */

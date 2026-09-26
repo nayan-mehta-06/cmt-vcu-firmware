@@ -48,7 +48,17 @@ void Task_Process_CAN_Msgs(void *argument)
 					osMutexAcquire(VehicleState_MutexHandle, osWaitForever);
 
 						uint32_t inverterVoltageRaw = CONVERT_TO_32BIT(msg.data[2], msg.data[3], msg.data[4], msg.data[5]);
-						p_vehicle_state_data->inverter_voltage = inverterVoltageRaw / 1000.0f;
+						uint32_t inverterVoltageScaled = inverterVoltageRaw / 1000.0f;
+
+						if (inverterVoltageScaled > 1000)
+						{
+							p_vehicle_state_data->inverter_voltage = 0;
+						}
+						else
+						{
+							p_vehicle_state_data->inverter_voltage = inverterVoltageRaw / 1000.0f;
+						}
+
 
 					osMutexRelease(VehicleState_MutexHandle);
 				  break;

@@ -92,31 +92,6 @@ void Task_Car_Calibration(void *argument)
 
 		osDelay(500);
 
-
-		/*
-		 * Record the maximum sensor values when the brake pedal is fully pressed down by continually receiving
-		 * values from the process_adc task until the driver presses the RTD button
-		 * */
-		RTD_BUTTON_LIGHT_ON();
-		do
-		{
-			  if (osMessageQueueGet(PedalsADCQueueHandle, &pedals_adc_data, NULL, osWaitForever) != osOK)
-			  {
-				  p_queue_errors_data->pedals_adc_errors++;
-			  }
-
-			  //calibration_data.bse_max_value = pedals_adc_data.bse_adc;
-
-			  osMutexAcquire(RawADC_Values_MutexHandle, osWaitForever);
-			  calibration_data.bse_max_value = Get_ADC_Channel(BSE_ADC_CHANNEL);
-			  osMutexRelease(RawADC_Values_MutexHandle);
-		}
-		while (!CHECK_RTD_BUTTON_STATUS());
-		RTD_BUTTON_LIGHT_OFF();
-
-		osDelay(500);
-
-
 		/*
 		 * Record the maximum sensor values when the accel pedal is fully pressed down by continually receiving
 		 * values from the process_adc task until the driver presses the RTD button
@@ -134,6 +109,29 @@ void Task_Car_Calibration(void *argument)
 			  osMutexAcquire(RawADC_Values_MutexHandle, osWaitForever);
 			  calibration_data.apps_1_max_value = Get_ADC_Channel(APPS1_ADC_CHANNEL);
 			  calibration_data.apps_2_max_value = Get_ADC_Channel(APPS2_ADC_CHANNEL);
+			  osMutexRelease(RawADC_Values_MutexHandle);
+		}
+		while (!CHECK_RTD_BUTTON_STATUS());
+		RTD_BUTTON_LIGHT_OFF();
+
+		osDelay(500);
+
+		/*
+		 * Record the maximum sensor values when the brake pedal is fully pressed down by continually receiving
+		 * values from the process_adc task until the driver presses the RTD button
+		 * */
+		RTD_BUTTON_LIGHT_ON();
+		do
+		{
+			  if (osMessageQueueGet(PedalsADCQueueHandle, &pedals_adc_data, NULL, osWaitForever) != osOK)
+			  {
+				  p_queue_errors_data->pedals_adc_errors++;
+			  }
+
+			  //calibration_data.bse_max_value = pedals_adc_data.bse_adc;
+
+			  osMutexAcquire(RawADC_Values_MutexHandle, osWaitForever);
+			  calibration_data.bse_max_value = Get_ADC_Channel(BSE_ADC_CHANNEL);
 			  osMutexRelease(RawADC_Values_MutexHandle);
 		}
 		while (!CHECK_RTD_BUTTON_STATUS());

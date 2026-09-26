@@ -39,6 +39,7 @@ typedef struct VehicleState
 	float BMS_voltage;
 	float accy_voltage;
 	float inverter_voltage;
+	uint16_t precharge_percentage;
 	bool calibrating;
 	bool calibration_complete;
 	bool precharge_signal_sent;

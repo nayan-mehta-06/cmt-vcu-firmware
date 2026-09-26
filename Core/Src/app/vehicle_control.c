@@ -35,6 +35,7 @@ void Task_Vehicle_Ctrl(void *argument)
 
 	bool brakes_engaged;
 
+	osDelay(3000);
 	// Start the periodic timer to transmit messages to the inverters over CAN1
 	osTimerStart(InverterCAN_Transmit_TimerHandle, INVERTER_TORQUE_COMMAND_CAN_TRANSMIT_RATE);
 

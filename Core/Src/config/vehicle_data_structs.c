@@ -15,6 +15,7 @@ void initialise_vehicle_state_data(VehicleState_t* p_vehicle_state)
 	p_vehicle_state->BMS_voltage = 0;
 	p_vehicle_state->accy_voltage = 0;
 	p_vehicle_state->inverter_voltage = 0;
+	p_vehicle_state->precharge_percentage = 0;
 	p_vehicle_state->calibrating = false;
 	p_vehicle_state->calibration_complete = false;
 	p_vehicle_state->precharge_signal_sent = false;

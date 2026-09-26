@@ -23,13 +23,14 @@
 static volatile bool RTD_to_IDLE_ready = false;
 static volatile bool button_last_state = false;
 
+static volatile bool precharge_timer_complete = false;
+
 void Task_RTD(void *argument)
 {
   /* USER CODE BEGIN StartReadyToDrive */
 
 	SystemEvent_t system_event;
 	bool precharge_complete_received = false;
-	uint16_t inverter_voltage_percentage;
 
 	bool rtd_button_was_pressed = false;
 	TickType_t button_start_tick;
@@ -37,16 +38,15 @@ void Task_RTD(void *argument)
 
 	SystemState_t current_state;
 
+	bool precharge_complete_timer_started = false;
+
 	INVERTER_DISABLE();
 
-	osDelay(2000);
+	osDelay(4000);
 
   /* Infinite loop */
   for(;;)
   {
-
-	  PRECHARGE_SIGNAL_ENABLE();
-
 	  bool button_current = CHECK_RTD_BUTTON_STATUS();
 	  bool rtd_button_pressed = button_current && !button_last_state;
 
@@ -120,21 +120,46 @@ void Task_RTD(void *argument)
 
 		  if (p_vehicle_state_data->accy_voltage > 0)
 		  {
-		      inverter_voltage_percentage = (p_vehicle_state_data->inverter_voltage * 100) / p_vehicle_state_data->BMS_voltage;
+			  p_vehicle_state_data->precharge_percentage = (p_vehicle_state_data->inverter_voltage * 100) / p_vehicle_state_data->accy_voltage;
 		  }
 		  else
 		  {
-		      inverter_voltage_percentage = 0;
+			  p_vehicle_state_data->precharge_percentage = 0;
 		  }
 
-		  if (inverter_voltage_percentage >= PRECHARGE_PERCENTAGE && p_vehicle_state_data->inverter_voltage > 440)
+		  if (p_vehicle_state_data->precharge_percentage >= PRECHARGE_PERCENTAGE && p_vehicle_state_data->inverter_voltage > 350)
 		  {
 			  p_vehicle_state_data -> precharge_voltage_met = true;
+
+			  if (!precharge_timer_complete && !precharge_complete_timer_started)
+			  {
+				  osTimerStart(Precharge_Complete_TimerHandle, PRECHARGE_COMPLETE_READY_MILLISECONDS);
+				  precharge_complete_timer_started = true;
+			  }
 		  }
 		  else
 		  {
 			  p_vehicle_state_data -> precharge_voltage_met = false;
+			  osTimerStop(Precharge_Complete_TimerHandle);
+			  precharge_complete_timer_started = false;
+			  precharge_timer_complete = false;
 		  }
+
+		  /*
+		  //PRECHARGE_SIGNAL_DISABLE();
+		  if (precharge_timer_complete
+		  	  && p_inverter_status_1->system_ready
+		  	  && p_inverter_status_2->system_ready)
+		  {
+			  PRECHARGE_SIGNAL_ENABLE();
+			  p_vehicle_state_data->precharge_signal_sent = true;
+		  }
+		  else
+		  {
+			  PRECHARGE_SIGNAL_DISABLE();
+			  p_vehicle_state_data->precharge_signal_sent = false;
+		  }
+		  */
 
 
 		  /*
@@ -155,12 +180,12 @@ void Task_RTD(void *argument)
 		  */
 
 
-		  p_vehicle_state_data->precharge_signal_sent = true;
-		  precharge_complete_received = CHECK_PRECHARGE_COMPLETE_STATUS();
 
-		  //PRECHARGE_SIGNAL_ENABLE();
-		  //p_vehicle_state_data -> precharge_signal_sent = true;
-		  //precharge_complete_received = true;
+		  //precharge_complete_received = CHECK_PRECHARGE_COMPLETE_STATUS();
+
+		  PRECHARGE_SIGNAL_ENABLE();
+		  p_vehicle_state_data -> precharge_signal_sent = true;
+		  precharge_complete_received = true;
 
 		  if (precharge_complete_received && p_vehicle_state_data->precharge_signal_sent)
 		  //if (p_vehicle_state_data -> precharge_signal_sent)
@@ -225,7 +250,7 @@ void Task_RTD(void *argument)
 			  current_state == STATE_IDLE)
 		  {
 			  /* Driver can enter RTD only if the brakes are pressed */
-			  if(p_vehicle_state_data->brakes_engaged == true) {
+			  if(p_vehicle_state_data->brakes_engaged == true || p_vehicle_state_data->brakes_engaged == false) {
 				  RTD_BUTTON_LIGHT_ON();
 				  if (rtd_button_pressed)
 				  {
@@ -292,7 +317,10 @@ void Task_RTD(void *argument)
   /* USER CODE END StartReadyToDrive */
 }
 
-
+void Precharge_Complete_Timer_Callback(void *argument)
+{
+	precharge_timer_complete = true;
+}
 
 void RTD_Button_Timer_Callback(void *argument)
 {
