@@ -35,6 +35,8 @@ void Task_Vehicle_Ctrl(void *argument)
 
 	bool brakes_engaged;
 
+	bool inverter_enabled = false;
+
 	osDelay(3000);
 	// Start the periodic timer to transmit messages to the inverters over CAN1
 	osTimerStart(InverterCAN_Transmit_TimerHandle, INVERTER_TORQUE_COMMAND_CAN_TRANSMIT_RATE);
@@ -67,6 +69,8 @@ void Task_Vehicle_Ctrl(void *argument)
 
 	  }
 
+	  inverter_enabled = p_vehicle_state_data->inverter_enabled;
+
 	  osMutexRelease(VehicleState_MutexHandle);
 
 	  // Inverter requires the torque setpoint to be in 0.1% units
@@ -84,18 +88,48 @@ void Task_Vehicle_Ctrl(void *argument)
 	   * By default, the inverter will be set no torque limits or setpoints as needed
 	   * by its start-up sequence and to ensure the car can't move randomly
 	   */
-		  if (current_state == STATE_RTD)
+		  if (current_state == STATE_RTD && torque_setpoint != 0 && inverter_enabled)
 		  {
-			  p_inverter_setpoints_1->torque_setpoint = torque_setpoint;
-			  p_inverter_setpoints_1->torque_limit_positive = TORQUE_LIM_POS;
-			  p_inverter_setpoints_1->torque_limit_negative = TORQUE_LIM_NEG;
 
-			  p_inverter_setpoints_2->torque_setpoint = torque_setpoint;
-			  p_inverter_setpoints_2->torque_limit_positive = TORQUE_LIM_POS;
-			  p_inverter_setpoints_2->torque_limit_negative = TORQUE_LIM_NEG;
+			  p_inverter_setpoints_1 -> control |= (1 << AMK_CONTROL_ENABLE);
+			  p_inverter_setpoints_1 -> control |= (1 << AMK_CONTROL_INVERTER_ON);
+
+			  p_inverter_setpoints_2 -> control |= (1 << AMK_CONTROL_ENABLE);
+			  p_inverter_setpoints_2 -> control |= (1 << AMK_CONTROL_INVERTER_ON);
+
+
+			  if (p_inverter_status_1->quit_inverter_on
+				  && p_inverter_status_2->quit_inverter_on)
+			  {
+				  p_inverter_setpoints_1->torque_setpoint = torque_setpoint;
+				  p_inverter_setpoints_1->torque_limit_positive = TORQUE_LIM_POS;
+				  p_inverter_setpoints_1->torque_limit_negative = TORQUE_LIM_NEG;
+
+				  p_inverter_setpoints_2->torque_setpoint = torque_setpoint;
+				  p_inverter_setpoints_2->torque_limit_positive = TORQUE_LIM_POS;
+				  p_inverter_setpoints_2->torque_limit_negative = TORQUE_LIM_NEG;
+			  }
+			  else
+			  {
+				  p_inverter_setpoints_1->torque_setpoint = 0;
+				  p_inverter_setpoints_1->torque_limit_positive = 0;
+				  p_inverter_setpoints_1->torque_limit_negative = 0;
+
+				  p_inverter_setpoints_2->torque_setpoint = 0;
+				  p_inverter_setpoints_2->torque_limit_positive = 0;
+				  p_inverter_setpoints_2->torque_limit_negative = 0;
+			  }
+
 		  }
 		  else
 		  {
+
+			  p_inverter_setpoints_1->control &= ~(1 << AMK_CONTROL_ENABLE);
+			  p_inverter_setpoints_1->control &= ~(1 << AMK_CONTROL_INVERTER_ON);
+
+			  p_inverter_setpoints_2->control &= ~(1 << AMK_CONTROL_ENABLE);
+			  p_inverter_setpoints_2->control &= ~(1 << AMK_CONTROL_INVERTER_ON);
+
 			  p_inverter_setpoints_1->torque_setpoint = 0;
 			  p_inverter_setpoints_1->torque_limit_positive = 0;
 			  p_inverter_setpoints_1->torque_limit_negative = 0;

@@ -185,11 +185,12 @@ void Task_RTD(void *argument)
 			  p_inverter_setpoints_2 -> control &= ~(1 << AMK_CONTROL_DC_ON);
 		  }
 
+		  /*
 		  if (p_inverter_status_1 -> dc_on && p_inverter_status_1 -> quit_dc_on
 			  && p_inverter_status_2 -> dc_on && p_inverter_status_2 -> quit_dc_on
 			  && current_state != STATE_FAULTED)
 		  {
-			  INVERTER_ENABLE();
+			  //INVERTER_ENABLE();
 
 			  p_inverter_setpoints_1 -> control |= (1 << AMK_CONTROL_ENABLE);
 			  p_inverter_setpoints_1 -> control |= (1 << AMK_CONTROL_INVERTER_ON);
@@ -199,7 +200,7 @@ void Task_RTD(void *argument)
 		  }
 		  else
 		  {
-			  INVERTER_DISABLE();
+			  //INVERTER_DISABLE();
 
 			  p_inverter_setpoints_1 -> control &= ~(1 << AMK_CONTROL_ENABLE);
 			  p_inverter_setpoints_1 -> control &= ~(1 << AMK_CONTROL_INVERTER_ON);
@@ -207,14 +208,15 @@ void Task_RTD(void *argument)
 			  p_inverter_setpoints_2 -> control &= ~(1 << AMK_CONTROL_ENABLE);
 			  p_inverter_setpoints_2 -> control &= ~(1 << AMK_CONTROL_INVERTER_ON);
 		  }
+		  */
 
-		  if (p_inverter_status_1->quit_inverter_on &&
-			  p_inverter_status_2->quit_inverter_on &&
+		  if (p_inverter_status_1->quit_dc_on &&
+			  p_inverter_status_2->quit_dc_on &&
 			  !p_vehicle_state_data->inverter_enabled &&
 			  current_state == STATE_IDLE)
 		  {
 			  /* Driver can enter RTD only if the brakes are pressed */
-			  if(p_vehicle_state_data->brakes_engaged == true || p_vehicle_state_data->brakes_engaged == false) {
+			  if(p_vehicle_state_data->brakes_engaged == true) {
 				  RTD_BUTTON_LIGHT_ON();
 				  if (rtd_button_pressed)
 				  {
@@ -228,6 +230,8 @@ void Task_RTD(void *argument)
 					  }
 
 					  p_vehicle_state_data->inverter_enabled = true;
+
+					  INVERTER_ENABLE();
 				  }
 			  }
 			  else
@@ -244,11 +248,18 @@ void Task_RTD(void *argument)
 		  {
 			  if (rtd_button_pressed)
 			  {
+				  /*
 				  p_inverter_setpoints_1->control &= ~(1 << AMK_CONTROL_ENABLE);
 				  p_inverter_setpoints_1->control &= ~(1 << AMK_CONTROL_INVERTER_ON);
 
 				  p_inverter_setpoints_2->control &= ~(1 << AMK_CONTROL_ENABLE);
 				  p_inverter_setpoints_2->control &= ~(1 << AMK_CONTROL_INVERTER_ON);
+				  */
+
+				  //p_inverter_setpoints_1->control &= ~(1 << AMK_CONTROL_DC_ON);
+				  //p_inverter_setpoints_2->control &= ~(1 << AMK_CONTROL_DC_ON);
+
+				  INVERTER_DISABLE();
 
 				  system_event = EVENT_EXIT_RTD;
 				  if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)
@@ -270,10 +281,16 @@ void Task_RTD(void *argument)
 	  {
 	      osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
 	      osMutexAcquire(InverterData2_MutexHandle, osWaitForever);
-	      p_inverter_setpoints_1->control &= ~((1 << AMK_CONTROL_ENABLE) | (1 << AMK_CONTROL_INVERTER_ON));
-	      p_inverter_setpoints_2->control &= ~((1 << AMK_CONTROL_ENABLE) | (1 << AMK_CONTROL_INVERTER_ON));
+		  p_inverter_setpoints_1->control &= ~(1 << AMK_CONTROL_DC_ON);
+		  p_inverter_setpoints_2->control &= ~(1 << AMK_CONTROL_DC_ON);
 	      osMutexRelease(InverterData2_MutexHandle);
 	      osMutexRelease(InverterData1_MutexHandle);
+
+	      osMutexAcquire(VehicleState_MutexHandle, osWaitForever);
+	      p_vehicle_state_data->inverter_enabled = false;
+	      osMutexRelease(VehicleState_MutexHandle);
+
+	      INVERTER_DISABLE();
 	  }
 
     osDelay(1);
