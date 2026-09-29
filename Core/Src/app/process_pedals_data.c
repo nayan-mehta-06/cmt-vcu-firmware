@@ -88,8 +88,8 @@ void Task_Process_Pedals_Data(void *argument)
 	apps_1_max = 1630;
 	apps_2_max = 2320;
 
-	bse_min = 407;
-	bse_max = 570;
+	bse_min = 370;
+	bse_max = 580;
 
   /* Infinite loop */
   for(;;)

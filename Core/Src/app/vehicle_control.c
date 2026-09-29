@@ -21,8 +21,8 @@
 #include "app/inverter_control.h"
 
 // Shared between Task_Vehicle_Ctrl and the error reset timer callbacks
-//static uint8_t inv_1_error_reset_attempts = 0;
-//static uint8_t inv_2_error_reset_attempts = 0;
+static uint8_t inv_1_error_reset_attempts = 0;
+static uint8_t inv_2_error_reset_attempts = 0;
 static volatile bool inv_1_error_reset_ready = true;
 static volatile bool inv_2_error_reset_ready = true;
 
@@ -105,7 +105,7 @@ void Task_Vehicle_Ctrl(void *argument)
 			  p_inverter_setpoints_2->torque_limit_negative = 0;
 		  }
 
-		  /*
+
 		  // Attempt to reset errors on Inverter 1
 		  if (p_inverter_status_1->error)
 		  {
@@ -158,7 +158,7 @@ void Task_Vehicle_Ctrl(void *argument)
 		      osTimerStop(INV_2_Error_Reset_TimerHandle);
 		  }
 
-		  */
+
 
 	  osMutexRelease(InverterData1_MutexHandle);
 	  osMutexRelease(InverterData2_MutexHandle);

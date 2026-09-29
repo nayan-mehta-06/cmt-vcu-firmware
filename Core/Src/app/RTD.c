@@ -53,6 +53,8 @@ void Task_RTD(void *argument)
 	  // Save for next loop
 	  button_last_state = button_current;
 
+	  //INVERTER_ENABLE();
+
 	  //bool rtd_button_pressed = CHECK_RTD_BUTTON_STATUS();
 	  //p_vehicle_state_data->button_toggled = CHECK_RTD_BUTTON_STATUS();
 
@@ -145,8 +147,6 @@ void Task_RTD(void *argument)
 			  precharge_timer_complete = false;
 		  }
 
-		  /*
-		  //PRECHARGE_SIGNAL_DISABLE();
 		  if (precharge_timer_complete
 		  	  && p_inverter_status_1->system_ready
 		  	  && p_inverter_status_2->system_ready)
@@ -159,33 +159,9 @@ void Task_RTD(void *argument)
 			  PRECHARGE_SIGNAL_DISABLE();
 			  p_vehicle_state_data->precharge_signal_sent = false;
 		  }
-		  */
 
-
-		  /*
-		  if (p_vehicle_state_data -> precharge_voltage_met)
-		  	  //&& p_inverter_status_1->system_ready
-		  	  //&& p_inverter_status_2->system_ready)
-		  {
-			  PRECHARGE_SIGNAL_ENABLE();
-			  p_vehicle_state_data -> precharge_signal_sent = true;
-			  //p_vehicle_state_data -> precharge_complete = true;
-		  }
-		  else
-		  {
-			  PRECHARGE_SIGNAL_DISABLE();
-			  p_vehicle_state_data -> precharge_signal_sent = false;
-			  //p_vehicle_state_data -> precharge_complete = false;
-		  }
-		  */
-
-
-
-		  //precharge_complete_received = CHECK_PRECHARGE_COMPLETE_STATUS();
-
-		  PRECHARGE_SIGNAL_ENABLE();
-		  p_vehicle_state_data -> precharge_signal_sent = true;
-		  precharge_complete_received = true;
+		  precharge_complete_received = CHECK_PRECHARGE_COMPLETE_STATUS();
+		  //p_vehicle_state_data -> precharge_signal_sent = true;
 
 		  if (precharge_complete_received && p_vehicle_state_data->precharge_signal_sent)
 		  //if (p_vehicle_state_data -> precharge_signal_sent)
@@ -198,7 +174,7 @@ void Task_RTD(void *argument)
 		  }
 
 
-		  if (p_vehicle_state_data -> precharge_complete && current_state != STATE_FAULTED)
+		  if (p_vehicle_state_data->precharge_percentage > 98 && current_state != STATE_FAULTED)
 		  {
 			  p_inverter_setpoints_1 -> control |= (1 << AMK_CONTROL_DC_ON);
 			  p_inverter_setpoints_2 -> control |= (1 << AMK_CONTROL_DC_ON);
@@ -231,18 +207,6 @@ void Task_RTD(void *argument)
 			  p_inverter_setpoints_2 -> control &= ~(1 << AMK_CONTROL_ENABLE);
 			  p_inverter_setpoints_2 -> control &= ~(1 << AMK_CONTROL_INVERTER_ON);
 		  }
-
-		  /*
-		  if (p_inverter_status_1 -> quit_inverter_on
-		  	  && p_inverter_status_2 -> quit_inverter_on) {
-			  p_vehicle_state_data -> inverter_enabled = true;
-			  osEventFlagsSet(Inverter_EnabledHandle, EVT_INVERTER_ENABLED);
-		  }
-		  else {
-			  p_vehicle_state_data -> inverter_enabled = false;
-			  osEventFlagsSet(Inverter_EnabledHandle, EVT_INVERTER_DISABLED);
-		  }
-		*/
 
 		  if (p_inverter_status_1->quit_inverter_on &&
 			  p_inverter_status_2->quit_inverter_on &&
