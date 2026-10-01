@@ -1,7 +1,7 @@
 ../Core/Src/config/vehicle_data_structs.c:13:6:initialise_vehicle_state_data	16	static
-../Core/Src/config/vehicle_data_structs.c:33:6:initialise_queue_errors	16	static
-../Core/Src/config/vehicle_data_structs.c:42:6:initialise_pedals_state	16	static
-../Core/Src/config/vehicle_data_structs.c:50:6:initialise_pedals_faults	16	static
-../Core/Src/config/vehicle_data_structs.c:59:6:initialise_eint_data	16	static
-../Core/Src/config/vehicle_data_structs.c:65:6:initialise_testing_VCU_data	16	static
-../Core/Src/config/vehicle_data_structs.c:82:6:initialise_freertos_task_stack_usage	16	static
+../Core/Src/config/vehicle_data_structs.c:34:6:initialise_queue_errors	16	static
+../Core/Src/config/vehicle_data_structs.c:43:6:initialise_pedals_state	16	static
+../Core/Src/config/vehicle_data_structs.c:51:6:initialise_pedals_faults	16	static
+../Core/Src/config/vehicle_data_structs.c:60:6:initialise_eint_data	16	static
+../Core/Src/config/vehicle_data_structs.c:66:6:initialise_testing_VCU_data	16	static
+../Core/Src/config/vehicle_data_structs.c:83:6:initialise_freertos_task_stack_usage	16	static

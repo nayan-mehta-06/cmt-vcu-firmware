@@ -52,6 +52,7 @@ typedef struct VehicleState
 	bool bse_fault;
 	bool cs_fault;
 	bool plausibility_fault;
+	int16_t torque_setpoint;
 
 } VehicleState_t;
 

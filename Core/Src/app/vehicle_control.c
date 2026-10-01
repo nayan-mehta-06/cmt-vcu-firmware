@@ -79,8 +79,11 @@ void Task_Vehicle_Ctrl(void *argument)
 	   */
 
 
+	  osMutexAcquire(VehicleState_MutexHandle, osWaitForever);
+	  torque_setpoint = (int16_t)(accel_pedal_percentage * 10.0f * (MAX_TORQUE_PERCENTAGE/100.0f));
 
-	  torque_setpoint = (int16_t)(accel_pedal_percentage * 10.0f * (MAX_TORQUE_PERCENTAGE/100));
+
+	  osMutexRelease(VehicleState_MutexHandle);
 
 	  osMutexAcquire(InverterData1_MutexHandle, osWaitForever);
 	  osMutexAcquire(InverterData2_MutexHandle, osWaitForever);
@@ -101,6 +104,8 @@ void Task_Vehicle_Ctrl(void *argument)
 			  if (p_inverter_status_1->quit_inverter_on
 				  && p_inverter_status_2->quit_inverter_on)
 			  {
+				  INVERTER_ENABLE();
+
 				  p_inverter_setpoints_1->torque_setpoint = torque_setpoint;
 				  p_inverter_setpoints_1->torque_limit_positive = TORQUE_LIM_POS;
 				  p_inverter_setpoints_1->torque_limit_negative = TORQUE_LIM_NEG;
@@ -111,6 +116,8 @@ void Task_Vehicle_Ctrl(void *argument)
 			  }
 			  else
 			  {
+				  INVERTER_DISABLE();
+
 				  p_inverter_setpoints_1->torque_setpoint = 0;
 				  p_inverter_setpoints_1->torque_limit_positive = 0;
 				  p_inverter_setpoints_1->torque_limit_negative = 0;
@@ -123,6 +130,8 @@ void Task_Vehicle_Ctrl(void *argument)
 		  }
 		  else
 		  {
+
+			  INVERTER_DISABLE();
 
 			  p_inverter_setpoints_1->control &= ~(1 << AMK_CONTROL_ENABLE);
 			  p_inverter_setpoints_1->control &= ~(1 << AMK_CONTROL_INVERTER_ON);

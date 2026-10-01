@@ -26,9 +26,9 @@
 
 #define CAN_2_INV_DATA_1 0x1A4
 #define CAN_2_INV_DATA_2 0X1A5
-#define CAN_2_VCU_DATA_1 0x1AE
-#define CAN_2_VCU_DATA_2 0xAEF
-#define CAN_2_VCU_DATA_3 0x1B0
+#define CAN_2_VCU_DATA_1 0x1B8
+#define CAN_2_VCU_DATA_2 0x1B9
+#define CAN_2_VCU_DATA_3 0x1BA
 
 #define EINT_FAULT_DATA 0x15
 

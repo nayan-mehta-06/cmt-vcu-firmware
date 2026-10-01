@@ -28,6 +28,7 @@ void initialise_vehicle_state_data(VehicleState_t* p_vehicle_state)
 	p_vehicle_state->bse_fault = false;
 	p_vehicle_state->cs_fault = false;
 	p_vehicle_state->plausibility_fault = false;
+	p_vehicle_state->torque_setpoint = 0;
 }
 
 void initialise_queue_errors(QueueErrors_t* p_queue_errors)

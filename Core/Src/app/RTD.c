@@ -231,7 +231,6 @@ void Task_RTD(void *argument)
 
 					  p_vehicle_state_data->inverter_enabled = true;
 
-					  INVERTER_ENABLE();
 				  }
 			  }
 			  else
@@ -259,7 +258,7 @@ void Task_RTD(void *argument)
 				  //p_inverter_setpoints_1->control &= ~(1 << AMK_CONTROL_DC_ON);
 				  //p_inverter_setpoints_2->control &= ~(1 << AMK_CONTROL_DC_ON);
 
-				  INVERTER_DISABLE();
+
 
 				  system_event = EVENT_EXIT_RTD;
 				  if (osMessageQueuePut(StateTransitionQueueHandle, &system_event, QUEUE_MESSAGE_PRIORITY, ADC_INPUT_QUEUE_TIMEOUT_MILLISECONDS) != osOK)

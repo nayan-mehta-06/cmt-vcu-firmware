@@ -84,9 +84,10 @@ void Task_Process_Pedals_Data(void *argument)
 	bse_max = (brake_pedal_calibration_values[2] + (brake_pedal_calibration_values[3] * 256));
 
 	apps_1_min = 570;
-	apps_2_min = 777;
-	apps_1_max = 1630;
-	apps_2_max = 2320;
+	apps_1_max = 1215;
+
+	apps_2_min = 1215;
+	apps_2_max = 2000;
 
 	bse_min = 370;
 	bse_max = 580;
@@ -207,11 +208,15 @@ void Task_Process_Pedals_Data(void *argument)
 
 		  accel_pedal_percentage = (apps_1_percentage + apps_2_percentage) / 2;
 
+		  //accel_pedal_percentage = (apps_2_percentage + apps_2_percentage) / 2;
+
 		  brake_pedal_percentage = calc_adc_percentage(pedals_adc_data.bse_adc, bse_min, bse_max);
 
 
-		  current_pedals_faults.apps_implausibility = APPS_Implausibility_Check(apps_1_percentage,
-																				apps_2_percentage);
+		  current_pedals_faults.apps_implausibility = APPS_Implausibility_Check(apps_1_percentage, apps_2_percentage);
+
+//current_pedals_faults.apps_implausibility = APPS_Implausibility_Check(apps_2_percentage,
+//				apps_2_percentage);
 
 		  current_pedals_faults.screenshot = Screenshot_Check(apps_1_percentage, apps_2_percentage,
 															   brake_pedal_percentage,
